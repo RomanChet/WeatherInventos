@@ -68,6 +68,9 @@
     <option name="KEY_ALIAS" value="key0" />
     <option name="BUILD_TARGET_KEY" value="apk" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1h6jPgxjDs3GVL6u1HMKChBzgJp" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -88,11 +91,11 @@
     <property name="SHOW_ALL_PROCESSES" value="false" />
     <property name="android.recentlyUsedThemes" value="Theme.Design.Light.NoActionBar&#10;Theme.Design.NoActionBar&#10;Theme.AppCompat.DayNight.NoActionBar&#10;Theme.AppCompat.Dialog.MinWidth&#10;Base.Theme.AppCompat.Dialog" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Dependencies" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
@@ -249,10 +252,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="60" y="78" key="AndroidThemeDialog/0.0.1366.728@0.0.1366.728" timestamp="1600424088966" />
-    <state x="526" y="181" key="FileChooserDialogImpl" timestamp="1600513232178">
+    <state x="526" y="181" key="FileChooserDialogImpl" timestamp="1600520633155">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="526" y="181" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1600513232178" />
+    <state x="526" y="181" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1600520633155" />
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1600013044925" />
     <state x="2325" y="469" key="FileChooserDialogImpl/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599822724371" />
     <state width="1323" height="383" key="GridCell.Tab.0.bottom" timestamp="1600515619923">
@@ -295,10 +298,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state width="1323" height="222" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1600165851235" />
-    <state x="328" y="13" key="SettingsEditor" timestamp="1600357165127">
+    <state x="325" y="13" key="SettingsEditor" timestamp="1600520724407">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="328" y="13" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1600357165127" />
+    <state x="325" y="13" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1600520724407" />
     <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599671669850" />
     <state x="469" y="135" width="725" height="489" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1600292232700">
       <screen x="0" y="0" width="1366" height="728" />
