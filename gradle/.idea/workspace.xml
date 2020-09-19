@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config>
+        <device id="pixel" />
+      </config>
+    </shared>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="66ba73d7-b10d-472e-a3f4-51d88b8a667f" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_30" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="WeatherAppInventos" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Interface" />
+        <option value="Kotlin File" />
+        <option value="Kotlin Object" />
+        <option value="layoutResourceFile" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1h6jPgxjDs3GVL6u1HMKChBzgJp" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DEBUGGABLE_DEVICE" value="emulator-5554" />
+    <property name="DEBUGGABLE_PROCESS" value="com.exemple.weatherappinwentos" />
+    <property name="DEBUGGER_ID" value="Auto" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_2_API_30" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-09-15T16:56:25.322Z" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHOW_ALL_PROCESSES" value="false" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../AndroidStudioProjects/DEV" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="com.example.weatherappinventos.MainResView" />
+      <recent name="com.example.weatherappinventos.API" />
+      <recent name="com.example.weatherappinventos.DataClasses" />
+    </key>
+    <key name="android.template.-1657030027">
+      <recent name="com.example.weatherappinventos" />
+    </key>
+    <key name="CreateKotlinClassDialog.RecentsKey">
+      <recent name="com.example.weatherappinventos" />
+    </key>
+    <key name="android.template.-1200537594">
+      <recent name="com.example.weatherappinventos" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\roman\Desktop\WeatherAppInventos1-master\app\src\main\java\com\example\weatherappinventos\DataClass" />
+      <recent name="C:\Users\roman\Desktop\WeatherAppInventos1-master\app\src\main\java\com\example\weatherappinventos" />
+      <recent name="C:\Users\roman\AndroidStudioProjects\WeatherAppInventos\app\src\main\java\com\example\weatherappinventos" />
+    </key>
+    <key name="android.template.1742484429">
+      <recent name="com.example.weatherappinventos" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="app" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sample Java Methods" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="66ba73d7-b10d-472e-a3f4-51d88b8a667f" name="Default Changelist" comment="" />
+      <created>1599338413910</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1599338413910</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="477" y="251" key="#PSD" timestamp="1599850776853">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="477" y="251" key="#PSD/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599850776853" />
+    <state x="491" y="192" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1600181535810">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="491" y="192" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1366.728@0.0.1366.728" timestamp="1600181535810" />
+    <state x="690" y="274" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599850060133" />
+    <state x="2331" y="408" key="#com.intellij.ide.util.MemberChooser" timestamp="1599827245481">
+      <screen x="1920" y="37" width="1050" height="1640" />
+    </state>
+    <state x="751" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599668743328" />
+    <state x="2331" y="408" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599827245481" />
+    <state x="2297" y="456" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1599831046034">
+      <screen x="1920" y="37" width="1050" height="1640" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599768926297" />
+    <state x="2297" y="456" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599831046034" />
+    <state x="723" y="183" width="485" height="673" key="#org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog" timestamp="1599997414933">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="723" y="183" width="485" height="673" key="#org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599997414933" />
+    <state x="540" y="274" key="AndroidCreateResourceDirectoryDialog" timestamp="1599663848378">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="540" y="274" key="AndroidCreateResourceDirectoryDialog/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599663848378" />
+    <state x="398" y="463" key="AndroidCreateResourceFileDialog" timestamp="1599853508790">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="398" y="463" key="AndroidCreateResourceFileDialog/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599853508790" />
+    <state x="538" y="129" key="AndroidProcessChooserDialog" timestamp="1600165731575">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="538" y="129" key="AndroidProcessChooserDialog/0.0.1366.728@0.0.1366.728" timestamp="1600165731575" />
+    <state x="526" y="192" key="FileChooserDialogImpl" timestamp="1600180135335">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="526" y="192" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1600180135335" />
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1600013044925" />
+    <state x="2325" y="469" key="FileChooserDialogImpl/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599822724371" />
+    <state width="1323" height="383" key="GridCell.Tab.0.bottom" timestamp="1600181954302">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="383" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1600181954302" />
+    <state width="1877" height="281" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599838357137" />
+    <state width="1007" height="479" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599829808966" />
+    <state width="1323" height="383" key="GridCell.Tab.0.center" timestamp="1600181954302">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="383" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1600181954302" />
+    <state width="1877" height="281" key="GridCell.Tab.0.center/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599838357137" />
+    <state width="1007" height="479" key="GridCell.Tab.0.center/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599829808966" />
+    <state width="1323" height="383" key="GridCell.Tab.0.left" timestamp="1600181954301">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="383" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1600181954301" />
+    <state width="1877" height="281" key="GridCell.Tab.0.left/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599838357137" />
+    <state width="1007" height="479" key="GridCell.Tab.0.left/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599829808966" />
+    <state width="1323" height="383" key="GridCell.Tab.0.right" timestamp="1600181954302">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="383" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1600181954302" />
+    <state width="1877" height="281" key="GridCell.Tab.0.right/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599838357137" />
+    <state width="1007" height="479" key="GridCell.Tab.0.right/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599829808966" />
+    <state width="1323" height="222" key="GridCell.Tab.1.bottom" timestamp="1600165851235">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="222" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1600165851235" />
+    <state width="1323" height="222" key="GridCell.Tab.1.center" timestamp="1600165851235">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="222" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1600165851235" />
+    <state width="1323" height="222" key="GridCell.Tab.1.left" timestamp="1600165851235">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="222" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1600165851235" />
+    <state width="1323" height="222" key="GridCell.Tab.1.right" timestamp="1600165851235">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="222" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1600165851235" />
+    <state x="461" y="162" key="SettingsEditor" timestamp="1599671669850">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599671669850" />
+    <state x="469" y="135" width="725" height="489" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1600033113753">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="469" y="135" width="725" height="489" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1366.728@0.0.1366.728" timestamp="1600033113753" />
+    <state x="619" y="199" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1599660264792">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="619" y="199" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599660264792" />
+    <state x="259" y="100" width="847" height="602" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1600165790424">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="259" y="100" width="847" height="602" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1366.728@0.0.1366.728" timestamp="1600165790424" />
+    <state x="701" y="162" key="refactoring.ChangeSignatureDialog" timestamp="1599662176215">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="701" y="162" key="refactoring.ChangeSignatureDialog/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1599662176215" />
+    <state x="331" y="236" key="run.anything.popup" timestamp="1600012559278">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="331" y="236" key="run.anything.popup/0.0.1920.1040/1920.37.1050.1640@0.0.1920.1040" timestamp="1600012559278" />
+    <state x="2101" y="409" key="run.anything.popup/0.0.1920.1040/1920.37.1050.1640@1920.37.1050.1640" timestamp="1599824976382" />
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1600092361820">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1600092361820" />
+  </component>
+</project>

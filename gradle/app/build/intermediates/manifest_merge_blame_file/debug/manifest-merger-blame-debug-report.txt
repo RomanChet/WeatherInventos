@@ -1,0 +1,73 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.exemple.weatherappinwentos"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="19"
+8-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="26" />
+9-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:5:5-67
+11-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:5:22-64
+12
+13    <application
+13-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:7:5-23:19
+14        android:allowBackup="true"
+14-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:8:9-35
+15        android:debuggable="true"
+16        android:icon="@mipmap/ic_launcher"
+16-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:9:9-43
+17        android:label="@string/app_name"
+17-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:10:9-41
+18        android:roundIcon="@mipmap/ic_launcher_round"
+18-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:11:9-54
+19        android:supportsRtl="true"
+19-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:12:9-35
+20        android:testOnly="true"
+21        android:theme="@style/AppTheme" >
+21-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:13:9-40
+22        <activity android:name="com.example.weatherappinventos.TestAct" />
+22-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:14:9-54
+22-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:14:19-42
+23        <activity android:name="com.example.weatherappinventos.MainPage" />
+23-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:15:9-46
+23-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:15:19-43
+24        <activity android:name="com.example.weatherappinventos.MainActivity" >
+24-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:16:9-22:20
+24-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:16:19-47
+25            <intent-filter>
+25-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:17:13-21:29
+26                <action android:name="android.intent.action.MAIN" />
+26-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:18:17-69
+26-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:18:25-66
+27
+28                <category android:name="android.intent.category.LAUNCHER" />
+28-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:20:17-77
+28-->C:\Users\Admin\Desktop\WeatherAppInventos1-master\app\src\main\AndroidManifest.xml:20:27-74
+29            </intent-filter>
+30        </activity>
+31
+32        <meta-data
+32-->[com.android.support:appcompat-v7:26.1.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\e20fcf395272b0f007950740307a8ffa\appcompat-v7-26.1.0\AndroidManifest.xml:26:9-28:38
+33            android:name="android.support.VERSION"
+33-->[com.android.support:appcompat-v7:26.1.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\e20fcf395272b0f007950740307a8ffa\appcompat-v7-26.1.0\AndroidManifest.xml:27:13-51
+34            android:value="26.1.0" />
+34-->[com.android.support:appcompat-v7:26.1.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\e20fcf395272b0f007950740307a8ffa\appcompat-v7-26.1.0\AndroidManifest.xml:28:13-35
+35
+36        <provider
+36-->[android.arch.lifecycle:extensions:1.1.1] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\480e85ef838c3b99c5d861cc7403992f\extensions-1.1.1\AndroidManifest.xml:23:9-27:43
+37            android:name="android.arch.lifecycle.ProcessLifecycleOwnerInitializer"
+37-->[android.arch.lifecycle:extensions:1.1.1] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\480e85ef838c3b99c5d861cc7403992f\extensions-1.1.1\AndroidManifest.xml:24:13-83
+38            android:authorities="com.exemple.weatherappinwentos.lifecycle-trojan"
+38-->[android.arch.lifecycle:extensions:1.1.1] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\480e85ef838c3b99c5d861cc7403992f\extensions-1.1.1\AndroidManifest.xml:25:13-68
+39            android:exported="false"
+39-->[android.arch.lifecycle:extensions:1.1.1] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\480e85ef838c3b99c5d861cc7403992f\extensions-1.1.1\AndroidManifest.xml:26:13-37
+40            android:multiprocess="true" />
+40-->[android.arch.lifecycle:extensions:1.1.1] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\480e85ef838c3b99c5d861cc7403992f\extensions-1.1.1\AndroidManifest.xml:27:13-40
+41    </application>
+42
+43</manifest>
