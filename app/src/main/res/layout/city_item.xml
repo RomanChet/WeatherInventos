@@ -33,7 +33,7 @@
                 android:text="Name"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3A3A3A"
-                android:textSize="33dp" />
+                android:textSize="31sp" />
 
             <TextView
                 android:id="@+id/currentCityTemp"
