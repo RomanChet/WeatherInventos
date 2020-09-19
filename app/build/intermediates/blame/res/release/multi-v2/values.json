@@ -1,25 +1,8 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Admin\\Desktop\\WeatherAppInventos1-master\\app\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
+            "outputFile": "C:\\Users\\Admin\\Documents\\GitHub\\WeatherInventos\\app\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
             "map": [
-                {
-                    "source": "C:\\Users\\Admin\\Desktop\\WeatherAppInventos1-master\\app\\src\\main\\res\\values\\strings.xml",
-                    "from": {
-                        "startLines": "2,1",
-                        "startColumns": "4,4",
-                        "startOffsets": "72,16",
-                        "endColumns": "68,55",
-                        "endOffsets": "136,67"
-                    },
-                    "to": {
-                        "startLines": "408,409",
-                        "startColumns": "4,4",
-                        "startOffsets": "25073,25142",
-                        "endColumns": "68,55",
-                        "endOffsets": "25137,25193"
-                    }
-                },
                 {
                     "source": "C:\\Users\\Admin\\.gradle\\caches\\transforms-2\\files-2.1\\5d5ac4e2bf35a3d5dbd59e1ec06ea996\\cardview-v7-26.1.0\\res\\values\\values.xml",
                     "from": {
@@ -37,23 +20,6 @@
                         "endLines": "118,119,120,121,253,254,255,461,1489,1492,1495,2062",
                         "endColumns": "60,61,61,63,58,56,53,12,12,12,12,684",
                         "endOffsets": "6290,6352,6414,6478,15340,15397,15451,29309,94514,94640,94768,144702"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Admin\\Desktop\\WeatherAppInventos1-master\\app\\src\\main\\res\\values\\colors.xml",
-                    "from": {
-                        "startLines": "4,2,3",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "153,55,102",
-                        "endColumns": "45,46,50",
-                        "endOffsets": "194,97,148"
-                    },
-                    "to": {
-                        "startLines": "122,123,124",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "6483,6529,6576",
-                        "endColumns": "45,46,50",
-                        "endOffsets": "6524,6571,6622"
                     }
                 },
                 {
@@ -112,6 +78,25 @@
                     }
                 },
                 {
+                    "source": "C:\\Users\\Admin\\Documents\\GitHub\\WeatherInventos\\app\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "7",
+                        "endColumns": "12",
+                        "endOffsets": "374"
+                    },
+                    "to": {
+                        "startLines": "429",
+                        "startColumns": "4",
+                        "startOffsets": "27219",
+                        "endLines": "434",
+                        "endColumns": "12",
+                        "endOffsets": "27533"
+                    }
+                },
+                {
                     "source": "C:\\Users\\Admin\\.gradle\\caches\\transforms-2\\files-2.1\\869ae8c6e9ca78c6e6db4eaaf9e90bd6\\design-26.1.0\\res\\values\\values.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,241,244,245,255,258,259,262,265,268,272,277,280,285,288,293,297,301,303,307,314,318,321,330,336,339,348,352,11,12,13,29,30,34,77,85,86,148,149,157,158,159,160,161,162,163,164,171",
@@ -128,6 +113,23 @@
                         "endLines": "125,126,127,128,129,130,131,132,133,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,357,358,366,369,370,373,374,375,410,411,412,413,414,415,416,417,428,753,1477,1487,1738,1739,1742,1745,1748,1752,1757,1795,1800,1803,1808,1812,1816,1921,1925,1932,1936,1939,1948,1954,1957,1966,1970,1979,2002,2003,2019,2056,2060,2105,2113,2129,2191,2192,2201,2202,2216,2275,2280,2281,2283,2312,2319,2332",
                         "endColumns": "73,80,63,65,69,69,69,69,66,53,78,72,64,62,70,70,61,68,65,66,66,55,50,52,51,53,62,58,61,58,59,62,74,71,70,55,70,56,56,65,63,70,56,52,62,51,57,46,44,47,65,61,62,56,56,144,120,86,90,300,165,154,101,12,12,96,12,12,91,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,253,165,94,198,138,99,98,163,35,222,205,136,201,462,128,132,174,141,505,35",
                         "endOffsets": "6696,6777,6841,6907,6977,7047,7117,7187,7254,15846,15925,15998,16063,16126,16197,16268,16330,16399,16465,16532,16599,16655,16706,16759,16811,16865,16928,16987,17049,17108,17168,17231,17306,17378,17449,17505,17576,17633,17690,17756,17820,17891,17948,18001,18064,18116,18174,21786,21831,22212,22404,22466,22646,22703,22760,25338,25459,25546,25637,25938,26104,26259,26361,27214,48621,93859,94450,113663,113755,113934,114102,114277,114530,114821,117535,117893,118035,118405,118565,118719,127200,127441,127876,128083,128242,128807,129168,129297,129964,130144,130853,134105,134271,134778,143600,143905,146847,147209,152831,155032,155255,156228,156365,157401,162120,163369,163502,164458,166148,167128,168758"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Admin\\Documents\\GitHub\\WeatherInventos\\app\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "2,1",
+                        "startColumns": "4,4",
+                        "startOffsets": "74,17",
+                        "endColumns": "68,55",
+                        "endOffsets": "138,68"
+                    },
+                    "to": {
+                        "startLines": "408,409",
+                        "startColumns": "4,4",
+                        "startOffsets": "25073,25142",
+                        "endColumns": "68,55",
+                        "endOffsets": "25137,25193"
                     }
                 },
                 {
@@ -184,26 +186,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Admin\\Desktop\\WeatherAppInventos1-master\\app\\src\\main\\res\\values\\styles.xml",
+                    "source": "C:\\Users\\Admin\\Documents\\GitHub\\WeatherInventos\\app\\src\\main\\res\\values\\colors.xml",
                     "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "53",
-                        "endLines": "7",
-                        "endColumns": "12",
-                        "endOffsets": "367"
+                        "startLines": "4,2,3",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "157,57,105",
+                        "endColumns": "45,46,50",
+                        "endOffsets": "198,99,151"
                     },
                     "to": {
-                        "startLines": "429",
-                        "startColumns": "4",
-                        "startOffsets": "27219",
-                        "endLines": "434",
-                        "endColumns": "12",
-                        "endOffsets": "27533"
+                        "startLines": "122,123,124",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "6483,6529,6576",
+                        "endColumns": "45,46,50",
+                        "endOffsets": "6524,6571,6622"
                     }
                 },
                 {
-                    "source": "C:\\Users\\Admin\\Desktop\\WeatherAppInventos1-master\\app\\src\\main\\res\\values\\ic_launcher_background.xml",
+                    "source": "C:\\Users\\Admin\\Documents\\GitHub\\WeatherInventos\\app\\src\\main\\res\\values\\ic_launcher_background.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

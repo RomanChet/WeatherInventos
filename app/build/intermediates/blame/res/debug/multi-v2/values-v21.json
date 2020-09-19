@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Admin\\Desktop\\WeatherAppInventos1-master\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v21\\values-v21.xml",
+            "outputFile": "C:\\Users\\Admin\\Documents\\GitHub\\WeatherInventos\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v21\\values-v21.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Admin\\.gradle\\caches\\transforms-2\\files-2.1\\869ae8c6e9ca78c6e6db4eaaf9e90bd6\\design-26.1.0\\res\\values-v21\\values-v21.xml",

@@ -66,6 +66,7 @@
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:hint="Место"
+            android:onClick="onNameClicked"
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="40sp"

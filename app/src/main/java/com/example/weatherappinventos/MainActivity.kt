@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import com.example.weatherappinventos.API.WeatherNetworkClient
 import com.example.weatherappinventos.DataClass.DataWeather
 import com.example.weatherappinventos.DataClass.MainItem
@@ -95,6 +96,9 @@ class MainActivity : AppCompatActivity() {
            else{
                items?.add(MainItem(city_name.text.toString(), currentTemp.text.toString()))
                cityNameText.text = null // обнуление строки ввода для удобства
+               city_name.text = ""
+               currentTemp.text = ""
+               descr.text = ""
                myAdapter?.notifyDataSetChanged()
            }
        }
@@ -171,6 +175,21 @@ class MainActivity : AppCompatActivity() {
             gson.fromJson(json, type)
     }
 
+    // жена попросила чтобы до добавления в избранное открывать детальный прогноз, кликнув на название населенного пункта вверху. Сделал так.
+    fun onNameClicked(view: View) {
+        if(city_name.text.toString() == "") {
+        }
+        else {
+            val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
+            val counterString = city_name.text // преобразование объекта в строку
+            goTestActivityIntent.putExtra(
+                SecondActivity.TOTAL_COUNT,
+                counterString
+            ) // добавляет значение в интент (ключ, и соответсвующее ему
+            // значение, которое потом получается при риеме ключа другим активити)
+            startActivity(goTestActivityIntent) // запуск активити
+        }
+    }
     // автоматическое сохранение данных при выходе из приложения
     override fun onDestroy() {
         super.onDestroy()
