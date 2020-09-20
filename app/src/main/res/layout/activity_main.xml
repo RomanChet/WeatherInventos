@@ -45,16 +45,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/myRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="655dp"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descr"
-        tools:listitem="@layout/city_item" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/myRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="655dp"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/descr"
+            tools:listitem="@layout/city_item"
+            android:paddingBottom="82dp"
+            android:clipToPadding="false"/>
 
         <TextView
             android:id="@+id/city_name"

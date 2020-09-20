@@ -26,7 +26,7 @@ class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : Re
 
         fun bind(item: MainItem) {
             cityName.text = item.name
-            cityTemp.text = item.temp
+           cityTemp.text = item.temp //
             itemView.setOnClickListener {
                 if (adapterPosition != RecyclerView.NO_POSITION) callback.onItemClicked(items[adapterPosition])
             }

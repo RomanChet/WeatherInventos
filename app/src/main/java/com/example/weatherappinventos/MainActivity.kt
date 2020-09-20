@@ -122,6 +122,8 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
+
+
     }
 
     // тут творится волшебство(выполнение и обработка запроса к API)
@@ -197,6 +199,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(goTestActivityIntent) // запуск активити
         }
     }
+
     // автоматическое сохранение данных при выходе из приложения
     override fun onDestroy() {
         super.onDestroy()
