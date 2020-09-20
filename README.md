@@ -6,3 +6,5 @@ This is my first Android app.
 3. Joy!
 
 Thanks!
+
+UPD: The app is constantly being updated!
