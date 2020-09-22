@@ -90,3 +90,7 @@ data class MainItem(
     val name: String,
     val temp: String
 )
+
+data class TempItem(
+    val temp: String
+)

@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.weatherappinventos.DataClass.DataWeather
 import com.example.weatherappinventos.DataClass.MainItem
+import com.example.weatherappinventos.DataClass.TempItem
 import com.example.weatherappinventos.R
 
 class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : RecyclerView.Adapter<MainAdapter.MainHolder>() {
@@ -24,15 +26,16 @@ class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : Re
         private val cityName = itemView.findViewById<TextView>(R.id.cityName)
         private val cityTemp = itemView.findViewById<TextView>(R.id.currentCityTemp)
 
+
         fun bind(item: MainItem) {
             cityName.text = item.name
-           cityTemp.text = item.temp //
+         //   cityTemp.text = items[0].name
+            cityTemp.text = item.temp //
             itemView.setOnClickListener {
                 if (adapterPosition != RecyclerView.NO_POSITION) callback.onItemClicked(items[adapterPosition])
             }
         }
     }
-
     fun removeAt(position: Int) {
         items.removeAt(position)
         notifyItemRemoved(position)
@@ -42,3 +45,5 @@ class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : Re
         fun onItemClicked(item: MainItem)
     }
 }
+
+// вывести элемент items[position]  это значение надо отправить в поле сити

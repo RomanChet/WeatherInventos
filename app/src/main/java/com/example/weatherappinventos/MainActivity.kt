@@ -17,10 +17,10 @@ import com.example.weatherappinventos.MainResView.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.city_item.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 /**
     От меня:
     Спасибо за прекрасное задание! В процессе его выполнения разобрался как работатает API вообще, с такими базовыми вещами как RecyclerView,
@@ -73,9 +73,15 @@ class MainActivity : AppCompatActivity() {
          val myAdapter = items?.let {
              MainAdapter(it, object : MainAdapter.Callback {
                  override fun onItemClicked(item: MainItem) {
-                     val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
+                     val goTestActivityIntent = Intent(
+                         this@MainActivity,
+                         SecondActivity::class.java
+                     )
                      val counterString = item.name // преобразование объекта в строку
-                     goTestActivityIntent.putExtra(SecondActivity.TOTAL_COUNT, counterString) // добавляет значение в интент (ключ, и соответсвующее ему
+                     goTestActivityIntent.putExtra(
+                         SecondActivity.TOTAL_COUNT,
+                         counterString
+                     ) // добавляет значение в интент (ключ, и соответсвующее ему
                      // значение, которое потом получается при риеме ключа другим активити)
                      startActivity(goTestActivityIntent) // запуск активити
                  }
@@ -120,10 +126,13 @@ class MainActivity : AppCompatActivity() {
                 val city = edit.toString()
                 getWeatherFromName(city)
             }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
         })
 
 
@@ -137,6 +146,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<DataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
             }
+
             override fun onResponse(call: Call<DataWeather>?, response: Response<DataWeather>?) {
                 if (response != null) {
                     val weather: DataWeather? = response.body()
@@ -156,11 +166,14 @@ class MainActivity : AppCompatActivity() {
                 city_name.text = ""
                 currentTemp.text = ""
                 descr.text = ""
+
             }
-            else{
+            else {
                 city_name.text = main.name
                 currentTemp.text = "${main.main.temp} °C"
-                descr.text = main.weather[0].description
+                 descr.text = main.weather[0].description
+
+
             }
         }
     }
@@ -198,7 +211,7 @@ class MainActivity : AppCompatActivity() {
                 SecondActivity.TOTAL_COUNT,
                 counterString
             ) // добавляет значение в интент (ключ, и соответсвующее ему
-            // значение, которое потом получается при риеме ключа другим активити)
+            // значение, которое потом получается при приеме ключа другим активити)
             startActivity(goTestActivityIntent) // запуск активити
         }
     }
@@ -209,16 +222,3 @@ class MainActivity : AppCompatActivity() {
         saveData()
     }
 }
-
-// сделать ResView список +
-// хранить его в БД +
-// этот список должен оставаться при перезапуске приложения +
-// вью каждого элемента списка содержит имя и температуру +
-// настроить редактирование (удалять, добавлять элемент) этой БД
-// погода на главном экране сделана на основе того, как уже работает, только значение параметра запроса city (в запросе это параметр "q") берется из БД
-// при нажатии на элемент, использовать его текстовое значение (параметр q или же city) и передавать его во второе активити, которое работает по принципу исходника (делается запрос, парсинг на основе города)
-
-// https://www.youtube.com/watch?v=r6MQ4VAHI_U&t=910s
-// работаем с массивом LIST. в нем можно по имени элемента получать айди. по этому айди можно удалять элемент.
-// этот массив при выходе из приложения преобразуется в джейсон строку и с помощью SharedPreferences сохраняется
-// при новом запуске  помощью SharedPreferences получаем строку, делаем обратное преобразование в List и выводим его элементы в RecyclerView
