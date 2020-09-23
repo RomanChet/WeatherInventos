@@ -35,7 +35,7 @@
             android:value="26.1.0" />
 
         <provider
-            android:name="android.arch.lifecycle.ProcessLifecycleOwnerInitializer"
+            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
             android:authorities="com.exemple.weatherappinwentos.lifecycle-trojan"
             android:exported="false"
             android:multiprocess="true" />

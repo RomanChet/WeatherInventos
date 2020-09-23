@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">WeatherAppInventos</string>
     <string name="api_key">cef1ebe434addacc0ea0911feea6b570</string>
+    <string name="hint_t_c">t °C</string>
+    <string name="hint_city_name">Место</string>
+    <string name="hint_description">погодные условия</string>
+    <string name="hint_editCityName">Введите город</string>
+    <string name="InfoText_5day">Прогноз погоды на 5 дней:</string>
+    <string name="hint_today">Сегодня</string>
+    <string name="infoTempLike">Ощущается:</string>
+    <string name="infoTemp_t_c">t °C :</string>
+    <string name="nameRecView">Name</string>
+    <string name="tempRecView">Temp</string>
 </resources>

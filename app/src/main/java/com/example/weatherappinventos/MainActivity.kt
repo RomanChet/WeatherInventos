@@ -3,17 +3,17 @@ package com.example.weatherappinventos
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import com.example.weatherappinventos.API.WeatherNetworkClient
-import com.example.weatherappinventos.DataClass.DataWeather
-import com.example.weatherappinventos.DataClass.MainItem
-import com.example.weatherappinventos.MainResView.MainAdapter
+import com.example.weatherappinventos.apiprocessing.CurrentCall
+import com.example.weatherappinventos.dataclass.CurrentDataWeather
+import com.example.weatherappinventos.dataclass.MainItem
+import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,70 +39,36 @@ class MainActivity : AppCompatActivity() {
 
     // переменные для обновления по свайпу вниз
     private lateinit var handler: Handler
-    private lateinit var runnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // загрузка данных SharedPreference
         loadData()
+        swipeRefresh()
+        listenerEditName()
 
-        // обновление активити по свайпу
-        handler = Handler()
-        val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.go_refreshMain)
-        swipeRefresh.setOnRefreshListener {
-            runnable = Runnable {
-                city_name.text = ""
-                currentTemp.text = ""
-                descr.text = ""
-                swipeRefresh.isRefreshing = false
-            }
-            handler.postDelayed(
-                runnable, 800.toLong()
-            )
-        }
-        go_refreshMain.setColorSchemeResources(
-            android.R.color.holo_blue_bright,
-            android.R.color.holo_green_light,
-            android.R.color.holo_orange_light,
-            android.R.color.holo_red_light
-        )
-
-         // клик по элементу приходит сюда, и дальше передается название города во второе активити
-         val myAdapter = items?.let {
+        // клик по элементу приходит сюда, и дальше передается название города во второе активити
+        val myAdapter = items?.let {
              MainAdapter(it, object : MainAdapter.Callback {
                  override fun onItemClicked(item: MainItem) {
-                     val goTestActivityIntent = Intent(
+                     val goSecondActivityIntent = Intent (
                          this@MainActivity,
                          SecondActivity::class.java
                      )
                      val counterString = item.name // преобразование объекта в строку
-                     goTestActivityIntent.putExtra(
-                         SecondActivity.TOTAL_COUNT,
+                     goSecondActivityIntent.putExtra(
+                         SecondActivity.PLACE_NAME,
                          counterString
                      ) // добавляет значение в интент (ключ, и соответсвующее ему
                      // значение, которое потом получается при риеме ключа другим активити)
-                     startActivity(goTestActivityIntent) // запуск активити
+                     startActivity(goSecondActivityIntent) // запуск активити
                  }
              })
-
-         }
+        }
 
         // привязываем ресайклервью к адаптеру (инцилизация)
         myRecycler.adapter = myAdapter
-
-        // удаление свайпом влево
-        val swipeHandler = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = myAdapter
-                if (adapter != null) {
-                    adapter.removeAt(viewHolder.adapterPosition)
-                }
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(myRecycler)
 
         // кнопка добавления города из поля ввода в список
        addbutton.setOnClickListener() {
@@ -119,6 +85,20 @@ class MainActivity : AppCompatActivity() {
            }
        }
 
+        // удаление свайпом влево
+        val swipeHandler = object : SwipeToDelete(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = myAdapter
+                if (adapter != null) {
+                    adapter.removeAt(viewHolder.adapterPosition)
+                }
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(myRecycler)
+    }
+
+    private fun listenerEditName(){
         // это функция принимает ввод имени города и передает его в getWeatherFromName
         cityNameText.addTextChangedListener(object :
             TextWatcher {
@@ -134,22 +114,39 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-
-
     }
 
+    private fun swipeRefresh(){
+     // обновление активити по свайпу
+     handler = Handler()
+     val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refreshMain)
+     val runnable = Runnable {
+         city_name.text = ""
+         currentTemp.text = ""
+         descr.text = ""
+         swipeRefresh.isRefreshing = false
+     }
+
+     swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
+
+     go_refreshMain.setColorSchemeResources(
+         android.R.color.holo_blue_bright,
+         android.R.color.holo_green_light,
+         android.R.color.holo_orange_light,
+         android.R.color.holo_red_light
+     )
+ }
     // тут творится волшебство(выполнение и обработка запроса к API)
     fun getWeatherFromName(city: String) {
-        val network = WeatherNetworkClient(applicationContext)
+        val network = CurrentCall(applicationContext)
         val call = network.clientCall(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
-        call.enqueue(object : Callback<DataWeather> { // объект для получения ответа
-            override fun onFailure(call: Call<DataWeather>?, t: Throwable?) {
+        call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
+            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
             }
-
-            override fun onResponse(call: Call<DataWeather>?, response: Response<DataWeather>?) {
+            override fun onResponse(call: Call<CurrentDataWeather>?, response: Response<CurrentDataWeather>?) {
                 if (response != null) {
-                    val weather: DataWeather? = response.body()
+                    val weather: CurrentDataWeather? = response.body()
                     val main = weather?.main
                     weather?.let {
                         presentData(it)
@@ -160,7 +157,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // функция прописывающая отображение данных из датаклассов во вью
-    private fun presentData(main: DataWeather) {
+    private fun presentData(main: CurrentDataWeather) {
         with(main) {
             if(cityNameText.text.toString() == ""){
                 city_name.text = ""
@@ -208,7 +205,7 @@ class MainActivity : AppCompatActivity() {
             val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
             val counterString = city_name.text // преобразование объекта в строку
             goTestActivityIntent.putExtra(
-                SecondActivity.TOTAL_COUNT,
+                SecondActivity.PLACE_NAME,
                 counterString
             ) // добавляет значение в интент (ключ, и соответсвующее ему
             // значение, которое потом получается при приеме ключа другим активити)
@@ -216,9 +213,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // автоматическое сохранение данных при выходе из приложения
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         saveData()
     }
 }

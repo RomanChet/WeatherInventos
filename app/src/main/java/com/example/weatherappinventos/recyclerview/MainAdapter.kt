@@ -1,13 +1,11 @@
-package com.example.weatherappinventos.MainResView
+package com.example.weatherappinventos.recyclerview
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.weatherappinventos.DataClass.DataWeather
-import com.example.weatherappinventos.DataClass.MainItem
-import com.example.weatherappinventos.DataClass.TempItem
+import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.R
 
 class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : RecyclerView.Adapter<MainAdapter.MainHolder>() {

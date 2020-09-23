@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/go_refresh"
     android:layout_width="match_parent"
@@ -11,30 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFFFFF"
+            android:background="#D0FFF1D8"
             tools:context="com.example.weatherappinventos.SecondActivity"
             tools:layout_editor_absoluteY="81dp">
 
             <View
-                android:id="@+id/backgroundSecond"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="@drawable/fon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <View
                 android:id="@+id/bgUp"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="57dp"
-                android:foreground="@drawable/bg4"
+                android:background="@drawable/bg4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -42,10 +30,10 @@
 
             <View
                 android:id="@+id/bgCenter"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="190dp"
                 android:layout_marginTop="8dp"
-                android:foreground="@drawable/bg3"
+                android:background="@drawable/bg3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -53,10 +41,10 @@
 
             <View
                 android:id="@+id/line1"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="83dp"
                 android:layout_marginTop="90dp"
-                android:foreground="@drawable/bg7"
+                android:background="@drawable/bg7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -64,10 +52,10 @@
 
             <View
                 android:id="@+id/line2"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="83dp"
                 android:layout_marginTop="87dp"
-                android:foreground="@drawable/bg7"
+                android:background="@drawable/bg7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,10 +63,10 @@
 
             <View
                 android:id="@+id/line3"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="83dp"
                 android:layout_marginTop="86dp"
-                android:foreground="@drawable/bg7"
+                android:background="@drawable/bg7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,11 +74,12 @@
 
             <View
                 android:id="@+id/bgDown"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="475dp"
                 android:layout_marginTop="12dp"
-                android:foreground="@drawable/bg5"
+                android:background="@drawable/bg5"
                 android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -98,13 +87,13 @@
 
             <TextView
                 android:id="@+id/cityNameSecond"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="55dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:hint="Место"
+                android:hint="@string/hint_city_name"
                 android:textAlignment="center"
                 android:textColor="#424242"
                 android:textSize="40sp"
@@ -119,7 +108,7 @@
                 android:layout_marginStart="40dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:hint="t °C"
+                android:hint="@string/hint_t_c"
                 android:textAlignment="center"
                 android:textColor="#424242"
                 android:textSize="30sp"
@@ -128,7 +117,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/weekDate" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/mainDescrImage"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
@@ -136,8 +125,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.904"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/cityDescrSecond"
@@ -147,7 +135,7 @@
                 android:layout_marginEnd="28dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
-                android:hint="погодные условия"
+                android:hint="@string/hint_description"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="italic"
@@ -158,13 +146,15 @@
 
             <TextView
                 android:id="@+id/InfoText"
-                android:layout_width="388dp"
+                android:layout_width="0dp"
                 android:layout_height="43dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="18dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg3"
                 android:fontFamily="sans-serif-medium"
-                android:foreground="@drawable/bg3"
                 android:gravity="center"
-                android:text="Прогноз погоды на 5 дней:"
+                android:text="@string/InfoText_5day"
                 android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="24sp"
@@ -190,13 +180,13 @@
                 android:id="@+id/nameDay1"
                 android:layout_width="150dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="60dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/firstDescrImage"
                 app:layout_constraintHorizontal_bias="0.09"
                 app:layout_constraintStart_toStartOf="parent"
@@ -206,13 +196,13 @@
                 android:id="@+id/nameDay2"
                 android:layout_width="150dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="50dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/secondDescrImage"
                 app:layout_constraintHorizontal_bias="0.09"
                 app:layout_constraintStart_toStartOf="parent"
@@ -222,13 +212,13 @@
                 android:id="@+id/nameDay3"
                 android:layout_width="150dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="50dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/thirdDescrImage"
                 app:layout_constraintHorizontal_bias="0.09"
                 app:layout_constraintStart_toStartOf="parent"
@@ -238,13 +228,13 @@
                 android:id="@+id/nameDay4"
                 android:layout_width="150dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="50dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/fourthDescrImage"
                 app:layout_constraintHorizontal_bias="0.09"
                 app:layout_constraintStart_toStartOf="parent"
@@ -254,67 +244,62 @@
                 android:id="@+id/nameDay5"
                 android:layout_width="150dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="50dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/fifthDescrImage"
                 app:layout_constraintHorizontal_bias="0.076"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/nameDay4" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/firstDescrImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="7dp"
                 app:layout_constraintEnd_toStartOf="@+id/dayOneTemp"
-                app:layout_constraintTop_toBottomOf="@+id/InfoText"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                app:layout_constraintTop_toBottomOf="@+id/InfoText" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/secondDescrImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="5dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="7dp"
                 app:layout_constraintEnd_toStartOf="@+id/dayTwoTemp"
-                app:layout_constraintTop_toBottomOf="@+id/firstDescrImage"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                app:layout_constraintTop_toBottomOf="@+id/firstDescrImage" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/thirdDescrImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="5dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="7dp"
                 app:layout_constraintEnd_toStartOf="@+id/dayThreeTemp"
-                app:layout_constraintTop_toBottomOf="@+id/secondDescrImage"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                app:layout_constraintTop_toBottomOf="@+id/secondDescrImage" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/fourthDescrImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="5dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="7dp"
                 app:layout_constraintEnd_toStartOf="@+id/dayFourTemp"
-                app:layout_constraintTop_toBottomOf="@+id/thirdDescrImage"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                app:layout_constraintTop_toBottomOf="@+id/thirdDescrImage" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/fifthDescrImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="5dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="7dp"
                 app:layout_constraintEnd_toStartOf="@+id/dayFiveTemp"
-                app:layout_constraintTop_toBottomOf="@+id/fourthDescrImage"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                app:layout_constraintTop_toBottomOf="@+id/fourthDescrImage" />
 
             <TextView
                 android:id="@+id/descrText1"
@@ -424,7 +409,7 @@
                 android:layout_marginTop="15dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="t °C :"
+                android:text="@string/infoTemp_t_c"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
                 android:textSize="18sp"
@@ -441,7 +426,7 @@
                 android:layout_marginEnd="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="Ощущается:"
+                android:text="@string/infoTempLike"
                 android:textAlignment="center"
                 android:textColor="#4A4A4A"
                 android:textSize="14sp"
@@ -560,7 +545,7 @@
                 android:layout_marginTop="76dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
-                android:hint="Сегодня"
+                android:hint="@string/hint_today"
                 android:textAlignment="center"
                 android:textColor="#616161"
                 android:textSize="18sp"
@@ -569,7 +554,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-</android.support.v4.widget.SwipeRefreshLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
