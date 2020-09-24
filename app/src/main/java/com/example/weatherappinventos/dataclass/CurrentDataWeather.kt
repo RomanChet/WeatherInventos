@@ -1,13 +1,13 @@
 package com.example.weatherappinventos.dataclass
 
 data class CurrentDataWeather (
-    val coord: CurrentCoord,
-    val weather: List<CurrentWeather>,
+    val coord: Coord,
+    val weather: List<Weather>,
     val base: String,
-    val main: CurrentMain,
+    val main: Main,
     val visibility: Int,
-    val wind: CurrentWind,
-    val clouds: CurrentClouds,
+    val wind: Wind,
+    val clouds: Clouds,
     val dt: Long,
     val sys: CurrentSys,
     val timezone: Int,
@@ -16,7 +16,7 @@ data class CurrentDataWeather (
     val cod: Int
 )
 
-data class CurrentMain(
+data class Main(
     val temp : Double,
     val feels_like : Double,
     val temp_min : Double,
@@ -28,18 +28,18 @@ data class CurrentMain(
     val temp_kf : Double
 )
 
-data class CurrentWeather (
+data class Weather (
     val id: Int,
     val main: String,
     val description: String,
     val icon: String
 )
 
-data class CurrentClouds(
+data class Clouds(
     val all : Int
 )
 
-data class CurrentCoord(
+data class Coord(
     val lon : Double,
     val lat : Double
 )
@@ -53,7 +53,7 @@ data class CurrentSys(
     val pod : String
 )
 
-data class CurrentWind(
+data class Wind(
     val speed : Double,
     val deg : Int
 )

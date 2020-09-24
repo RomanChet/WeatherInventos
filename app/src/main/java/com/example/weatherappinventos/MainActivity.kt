@@ -21,17 +21,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-/**
-    От меня:
-    Спасибо за прекрасное задание! В процессе его выполнения разобрался как работатает API вообще, с такими базовыми вещами как RecyclerView,
-Data Class и со всем причастным. У меня было время не отвлекаясь, понять эти моменты. Самое крутое то, что с каждым днем, решая множество мелких задач,
-всё быстрее понимал как их можно сделать.
-    Всегда хотел реализовать себя в будущем как разработчик и вот, первый наношаг. Хочется набираться оыта, решать задачи, искать и находить решения
-каждый день!
-    Надеюсь, что для работы новичка самоучки это хороший результат. Очень интересно услышать Ваше мнение. Готов и хочу работать дальше!
-    Не знаком с Вами лично, но очень захотелось поделиться! С уважением, Рома Четвериков!
-*/
-
 class MainActivity : AppCompatActivity() {
 
     // создание массива данных,  в котором будет содержаться списов городов на главной странице
@@ -71,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         myRecycler.adapter = myAdapter
 
         // кнопка добавления города из поля ввода в список
-       addbutton.setOnClickListener() {
+        addbutton.setOnClickListener() {
            if(city_name.text.toString() == "") {
                items = items
            }
@@ -83,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                descr.text = ""
                myAdapter?.notifyDataSetChanged()
            }
-       }
+        }
 
         // удаление свайпом влево
         val swipeHandler = object : SwipeToDelete(this) {
@@ -106,26 +95,22 @@ class MainActivity : AppCompatActivity() {
                 val city = edit.toString()
                 getWeatherFromName(city)
             }
-
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
-
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
-
         })
     }
 
     private fun swipeRefresh(){
-     // обновление активити по свайпу
-     handler = Handler()
-     val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refreshMain)
-     val runnable = Runnable {
-         city_name.text = ""
-         currentTemp.text = ""
-         descr.text = ""
-         swipeRefresh.isRefreshing = false
-     }
+        handler = Handler()
+        val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refreshMain)
+        val runnable = Runnable {
+            city_name.text = ""
+            currentTemp.text = ""
+            descr.text = ""
+            swipeRefresh.isRefreshing = false
+        }
 
      swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
 
@@ -135,11 +120,12 @@ class MainActivity : AppCompatActivity() {
          android.R.color.holo_orange_light,
          android.R.color.holo_red_light
      )
- }
-    // тут творится волшебство(выполнение и обработка запроса к API)
+    }
+
+    // выполнение и обработка запроса к API
     fun getWeatherFromName(city: String) {
         val network = CurrentCall(applicationContext)
-        val call = network.clientCall(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+        val call = network.clientCallCurrent(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
         call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()

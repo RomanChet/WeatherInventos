@@ -5,7 +5,6 @@ import android.os.Handler
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
-import android.widget.ImageView
 import com.example.weatherappinventos.apiprocessing.ForecastCall
 import com.example.weatherappinventos.apiprocessing.CurrentCall
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
@@ -14,8 +13,8 @@ import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Method
 import java.util.*
-
 
 class SecondActivity : AppCompatActivity() {
 
@@ -34,8 +33,6 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
-        // выполнение запросов на основании Интента, от первого активити
-        // две функии потому, что нет такого запроса (бесплатного) в котором будут в ответе все необходимые данные
         currentApiProcessing()
         forecastApiProcessing()
         swipeRefreshSecond()
@@ -64,14 +61,12 @@ class SecondActivity : AppCompatActivity() {
         )
     }
 
-    // выполнение и обработка запроса к API
-    // функция извлечения значения из ТОТАЛ_КАУНТ
     private fun currentApiProcessing() {
         val count : String? = intent.getStringExtra(PLACE_NAME) //извлечение значения из интент маин активити
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         val network = CurrentCall(applicationContext)
         val call =
-            count?.let { network.clientCall(it) } // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+            count?.let { network.clientCallCurrent(it) } // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
         if (call != null) {
             call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
                 override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
@@ -95,7 +90,7 @@ class SecondActivity : AppCompatActivity() {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         val networkSec = ForecastCall(applicationContext)
         val call =
-            countSecond?.let { networkSec.clientCall(it) } // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+            countSecond?.let { networkSec.clientCallForecast(it) } // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
         if (call != null) {
             call.enqueue(object : Callback<ForecastDataWeather> { // объект для получения ответа
                 override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
@@ -119,13 +114,6 @@ class SecondActivity : AppCompatActivity() {
 
     // инцилизация и установка иконок погодных условий
     fun iconsInstaller(main: ForecastDataWeather){
-        findViewById<ImageView>(R.id.mainDescrImage)
-        findViewById<ImageView>(R.id.firstDescrImage)
-        findViewById<ImageView>(R.id.secondDescrImage)
-        findViewById<ImageView>(R.id.thirdDescrImage)
-        findViewById<ImageView>(R.id.fourthDescrImage)
-        findViewById<ImageView>(R.id.fifthDescrImage)
-
         val mainIcon = main.list[0].weather[0].icon
         val firstDayIcon = main.list[7].weather[0].icon
         val secondDayIcon = main.list[15].weather[0].icon
@@ -141,6 +129,7 @@ class SecondActivity : AppCompatActivity() {
         fourthDescrImage.setImageResource(weatherConditionIconResId(fourthDayIcon))
         fifthDescrImage.setImageResource(weatherConditionIconResId(fifthDayIcon))
     }
+
     // возвращает значение аргумента в зависимости от имени иконки
     private fun weatherConditionIconResId(iconName: String): Int {
        return when (iconName) {
@@ -168,36 +157,36 @@ class SecondActivity : AppCompatActivity() {
 
     // перевод и установка представляемых данных текущей температуры
     private fun presentData(main: CurrentDataWeather) {
-        val dt = main.dt
-        val date = Date(dt*1000).toString()
-        val str = date.split(" ")
-        var st = str[0]
-        var mounthName = str[1]
-        val numberDay = str[2]
+        weekDayValue(main.dt)
+        var st = weekDayValue(main.dt)[0]
+        var mounthName = weekDayValue(main.dt)[1]
+        val numberDay = weekDayValue(main.dt)[2]
 
-        when (mounthName) {
-            "Jan" -> mounthName = "Января"
-            "Feb" -> mounthName = "Февраля"
-            "Mar" -> mounthName = "Марта"
-            "Apr" -> mounthName = "Апреля"
-            "May" -> mounthName = "Мая"
-            "Jun" -> mounthName = "Июня"
-            "Jul" -> mounthName = "Июля"
-            "Aug" -> mounthName = "Августа"
-            "Sep" -> mounthName = "Сентября"
-            "Oct" -> mounthName = "Октября"
-            "Nov" -> mounthName = "Ноября"
-            "Dec" -> mounthName = "Декабря"
+        mounthName = when (mounthName) {
+            "Jan" -> "Января"
+            "Feb" -> "Февраля"
+            "Mar" -> "Марта"
+            "Apr" -> "Апреля"
+            "May" -> "Мая"
+            "Jun" -> "Июня"
+            "Jul" -> "Июля"
+            "Aug" -> "Августа"
+            "Sep" -> "Сентября"
+            "Oct" -> "Октября"
+            "Nov" -> "Ноября"
+            "Dec" -> "Декабря"
+            else -> ""
         }
 
-        when (st) {
-            "Mon" -> st = "Понедельник"
-            "Tue" -> st = "Вторник"
-            "Wed" -> st = "Среда"
-            "Thu" -> st = "Четверг"
-            "Fri" -> st = "Пятница"
-            "Sat" -> st = "Суббота"
-            "Sun" -> st = "Воскресенье"
+        st = when (st) {
+            "Mon" -> "Понедельник"
+            "Tue" -> "Вторник"
+            "Wed" -> "Среда"
+            "Thu" -> "Четверг"
+            "Fri" -> "Пятница"
+            "Sat" -> "Суббота"
+            "Sun" -> "Воскресенье"
+            else -> ""
         }
         with(main) {
             cityNameSecond.text = main.name
@@ -208,10 +197,9 @@ class SecondActivity : AppCompatActivity() {
     }
 
     // извлекатель дня недели из UNIX даты
-    private fun weekDayValue(unixTime: Long): String {
+    private fun weekDayValue(unixTime: Long): List<String> {
         val toUsualDate = Date(unixTime*1000).toString()
-        val parseWeekDay = toUsualDate.split(" ")
-        return parseWeekDay[0]
+        return toUsualDate.split(" ")
     }
 
     // переводчик дней недели
@@ -228,6 +216,10 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
+    private fun reduceDayWeek(dt: Long): String {
+        return translatingWeekDays(weekDayValue(dt)[0])
+    }
+
     // извлечение и перевод дней недели из приходящей в UNIX формате даты
     fun weekDaysInstaller(main: ForecastDataWeather) {
         val dtDayWeekOne = main.list[7].dt
@@ -236,11 +228,11 @@ class SecondActivity : AppCompatActivity() {
         val dtDayWeekFour = main.list[31].dt
         val dtDayWeekFive = main.list[39].dt
 
-        val firstNameDayWeek = translatingWeekDays(weekDayValue(dtDayWeekOne))
-        val secondNameDayWeek = translatingWeekDays(weekDayValue(dtDayWeekTwo))
-        val thirdNameDayWeek = translatingWeekDays(weekDayValue(dtDayWeekThree))
-        val fourthNameDayWeek = translatingWeekDays(weekDayValue(dtDayWeekFour))
-        val fifthNameDayWeek = translatingWeekDays(weekDayValue(dtDayWeekFive))
+        val firstNameDayWeek = reduceDayWeek(dtDayWeekOne)
+        val secondNameDayWeek = reduceDayWeek(dtDayWeekTwo)
+        val thirdNameDayWeek = reduceDayWeek(dtDayWeekThree)
+        val fourthNameDayWeek = reduceDayWeek(dtDayWeekFour)
+        val fifthNameDayWeek = reduceDayWeek(dtDayWeekFive)
 
         // представление пяти ближайих названий дней недели
         nameDay1.text = "${firstNameDayWeek}:"
