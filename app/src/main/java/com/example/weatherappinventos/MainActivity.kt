@@ -36,9 +36,10 @@ class MainActivity : AppCompatActivity() {
         loadData()
         swipeRefresh()
         listenerEditName()
+        itemsIterrator()
 
         // клик по элементу приходит сюда, и дальше передается название города во второе активити
-        val myAdapter = items?.let {
+         val myAdapter = items?.let {
              MainAdapter(it, object : MainAdapter.Callback {
                  override fun onItemClicked(item: MainItem) {
                      val goSecondActivityIntent = Intent (
@@ -61,6 +62,8 @@ class MainActivity : AppCompatActivity() {
 
         // кнопка добавления города из поля ввода в список
         addbutton.setOnClickListener() {
+            myAdapter?.notifyDataSetChanged()
+            myAdapter?.notifyDataSetChanged()
            if(city_name.text.toString() == "") {
                items = items
            }
@@ -70,7 +73,6 @@ class MainActivity : AppCompatActivity() {
                city_name.text = ""
                currentTemp.text = ""
                descr.text = ""
-               myAdapter?.notifyDataSetChanged()
            }
         }
 
@@ -86,6 +88,8 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(myRecycler)
     }
+
+   // fun celector(n: MainItem): String = n.name
 
     private fun listenerEditName(){
         // это функция принимает ввод имени города и передает его в getWeatherFromName
@@ -149,15 +153,54 @@ class MainActivity : AppCompatActivity() {
                 city_name.text = ""
                 currentTemp.text = ""
                 descr.text = ""
-
             }
             else {
                 city_name.text = main.name
                 currentTemp.text = "${main.main.temp} °C"
                  descr.text = main.weather[0].description
-
-
             }
+        }
+    }
+
+    private fun itemsIterrator() {
+        val size = items!!.size - 1
+        val arr = arrayListOf<Int>()
+        val nameArr = arrayListOf<String>()
+        for(i in 0..size)
+            arr.add(i)
+        for(i in arr )
+            nameArr.add(items!![i].name)
+           for(ir in nameArr)
+              getWeatherFromTemp(ir)
+    }
+
+    // выполнение и обработка запроса к API
+    fun getWeatherFromTemp(city: String) {
+        val network = CurrentCall(applicationContext)
+        val call = network.clientCallCurrent(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+        call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
+            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
+                t?.printStackTrace()
+            }
+            override fun onResponse(call: Call<CurrentDataWeather>?, response: Response<CurrentDataWeather>?) {
+                if (response != null) {
+                    val weather: CurrentDataWeather? = response.body()
+                    val main = weather?.main
+                    weather?.let {
+                        presentDataTemp(it)
+
+                    }
+                }
+            }
+        })
+    }
+
+    // функция прописывающая отображение данных из датаклассов во вью
+    private fun presentDataTemp(main: CurrentDataWeather) {
+        with(main) {
+            items?.removeAt(0)
+            items?.add(MainItem(main.name, "${main.main.temp} °C"))
+          //  items?.sortBy {celector(it) }
         }
     }
 
