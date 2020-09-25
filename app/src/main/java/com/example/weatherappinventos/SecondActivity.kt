@@ -5,15 +5,14 @@ import android.os.Handler
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
-import com.example.weatherappinventos.apiprocessing.ForecastCall
-import com.example.weatherappinventos.apiprocessing.CurrentCall
+import android.widget.ImageView
+import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.reflect.Method
 import java.util.*
 
 class SecondActivity : AppCompatActivity() {
@@ -21,17 +20,17 @@ class SecondActivity : AppCompatActivity() {
     // переменные для обновления по свайпу вниз
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
+    private lateinit var apiClient: WeatherApiClient
 
-    companion object { // для того, чтобы обращаться к методам и свойствам объекта
-        // через имя содержащего его класса без явного указания имени объекта.
-        // (к тотал_коунт можно обратиться за классом)
-        const val PLACE_NAME = "place_name" // объявляем переменную-ключ для (приема)передачи данных
-        // из другого активити (будет использоваться в PutExtra)
+    companion object {
+        const val PLACE_NAME = "place_name"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
+
+        apiClient = WeatherApiClient(this)
 
         currentApiProcessing()
         forecastApiProcessing()
@@ -62,11 +61,8 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun currentApiProcessing() {
-        val count : String? = intent.getStringExtra(PLACE_NAME) //извлечение значения из интент маин активити
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        val network = CurrentCall(applicationContext)
-        val call =
-            count?.let { network.clientCallCurrent(it) } // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+        val count : String? = intent.getStringExtra(PLACE_NAME)
+        val call = count?.let { apiClient.currentWeather(it) }
         if (call != null) {
             call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
                 override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
@@ -86,11 +82,8 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun forecastApiProcessing() {
-        val countSecond : String? = intent.getStringExtra(PLACE_NAME) //извлечение значения из интент маин активити
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        val networkSec = ForecastCall(applicationContext)
-        val call =
-            countSecond?.let { networkSec.clientCallForecast(it) } // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+        val countSecond : String? = intent.getStringExtra(PLACE_NAME)
+        val call = countSecond?.let { apiClient.weatherForecast(it) }
         if (call != null) {
             call.enqueue(object : Callback<ForecastDataWeather> { // объект для получения ответа
                 override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
@@ -104,7 +97,7 @@ class SecondActivity : AppCompatActivity() {
                             weekDaysInstaller(it)
                             iconsInstaller(it)
                             downPresentData(it)
-                            progressBar2.visibility = View.INVISIBLE
+                            progressBarSecond.visibility = View.INVISIBLE
                         }
                     }
                 }
@@ -112,22 +105,18 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
+    private fun reduceFun (viewIcon: ImageView, nameIcon: String) {
+        viewIcon.setImageResource(weatherConditionIconResId(nameIcon))
+    }
+
     // инцилизация и установка иконок погодных условий
     fun iconsInstaller(main: ForecastDataWeather){
-        val mainIcon = main.list[0].weather[0].icon
-        val firstDayIcon = main.list[7].weather[0].icon
-        val secondDayIcon = main.list[15].weather[0].icon
-        val thirdDayIcon = main.list[23].weather[0].icon
-        val fourthDayIcon = main.list[31].weather[0].icon
-        val fifthDayIcon = main.list[39].weather[0].icon
-
-        // установка происходит сдесь( при помощи setImageResource)
-        mainDescrImage.setImageResource(weatherConditionIconResId(mainIcon))
-        firstDescrImage.setImageResource(weatherConditionIconResId(firstDayIcon))
-        secondDescrImage.setImageResource(weatherConditionIconResId(secondDayIcon))
-        thirdDescrImage.setImageResource(weatherConditionIconResId(thirdDayIcon))
-        fourthDescrImage.setImageResource(weatherConditionIconResId(fourthDayIcon))
-        fifthDescrImage.setImageResource(weatherConditionIconResId(fifthDayIcon))
+        reduceFun(mainDescrImage, main.list[0].weather[0].icon)
+        reduceFun(firstDescrImage, main.list[7].weather[0].icon)
+        reduceFun(secondDescrImage, main.list[15].weather[0].icon)
+        reduceFun(thirdDescrImage, main.list[23].weather[0].icon)
+        reduceFun(fourthDescrImage, main.list[31].weather[0].icon)
+        reduceFun(fifthDescrImage, main.list[39].weather[0].icon)
     }
 
     // возвращает значение аргумента в зависимости от имени иконки
@@ -157,10 +146,10 @@ class SecondActivity : AppCompatActivity() {
 
     // перевод и установка представляемых данных текущей температуры
     private fun presentData(main: CurrentDataWeather) {
-        weekDayValue(main.dt)
-        var st = weekDayValue(main.dt)[0]
-        var mounthName = weekDayValue(main.dt)[1]
-        val numberDay = weekDayValue(main.dt)[2]
+        val constPrDt =weekDayValue(main.dt)
+        var st = constPrDt[0]
+        var mounthName = constPrDt[1]
+        val numberDay = constPrDt[2]
 
         mounthName = when (mounthName) {
             "Jan" -> "Января"
@@ -222,26 +211,12 @@ class SecondActivity : AppCompatActivity() {
 
     // извлечение и перевод дней недели из приходящей в UNIX формате даты
     fun weekDaysInstaller(main: ForecastDataWeather) {
-        val dtDayWeekOne = main.list[7].dt
-        val dtDayWeekTwo = main.list[15].dt
-        val dtDayWeekThree = main.list[23].dt
-        val dtDayWeekFour = main.list[31].dt
-        val dtDayWeekFive = main.list[39].dt
-
-        val firstNameDayWeek = reduceDayWeek(dtDayWeekOne)
-        val secondNameDayWeek = reduceDayWeek(dtDayWeekTwo)
-        val thirdNameDayWeek = reduceDayWeek(dtDayWeekThree)
-        val fourthNameDayWeek = reduceDayWeek(dtDayWeekFour)
-        val fifthNameDayWeek = reduceDayWeek(dtDayWeekFive)
-
-        // представление пяти ближайих названий дней недели
-        nameDay1.text = "${firstNameDayWeek}:"
-        nameDay2.text = "${secondNameDayWeek}:"
-        nameDay3.text = "${thirdNameDayWeek}:"
-        nameDay4.text = "${fourthNameDayWeek}:"
-        nameDay5.text = "${fifthNameDayWeek}:"
+        nameDay1.text = "${reduceDayWeek(main.list[7].dt)}:"
+        nameDay2.text = "${reduceDayWeek(main.list[15].dt)}:"
+        nameDay3.text = "${reduceDayWeek(main.list[23].dt)}:"
+        nameDay4.text = "${reduceDayWeek(main.list[31].dt)}:"
+        nameDay5.text = "${reduceDayWeek(main.list[39].dt)}:"
 }
-
     // представление данных, прогнозируеммой погоды
     fun downPresentData(main: ForecastDataWeather){
         // прогноз температуры на 5 дней (1 колонка)

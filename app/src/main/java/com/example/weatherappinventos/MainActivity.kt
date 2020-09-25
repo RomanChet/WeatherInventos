@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import com.example.weatherappinventos.apiprocessing.CurrentCall
+import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,17 +27,18 @@ class MainActivity : AppCompatActivity() {
     // создание массива данных,  в котором будет содержаться списов городов на главной странице
     private var items : MutableList<MainItem>? = ArrayList()
 
-    // переменные для обновления по свайпу вниз
     private lateinit var handler: Handler
+    private lateinit var apiClient: WeatherApiClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        apiClient = WeatherApiClient(this)
+
         loadData()
         swipeRefresh()
         listenerEditName()
-        itemsIterrator()
 
         // клик по элементу приходит сюда, и дальше передается название города во второе активити
          val myAdapter = items?.let {
@@ -60,10 +62,10 @@ class MainActivity : AppCompatActivity() {
         // привязываем ресайклервью к адаптеру (инцилизация)
         myRecycler.adapter = myAdapter
 
+        itemsIterrator()
+
         // кнопка добавления города из поля ввода в список
         addbutton.setOnClickListener() {
-            myAdapter?.notifyDataSetChanged()
-            myAdapter?.notifyDataSetChanged()
            if(city_name.text.toString() == "") {
                items = items
            }
@@ -73,11 +75,10 @@ class MainActivity : AppCompatActivity() {
                city_name.text = ""
                currentTemp.text = ""
                descr.text = ""
-               itemsIterrator()
+               myAdapter?.notifyDataSetChanged()
            }
         }
 
-        // удаление свайпом влево
         val swipeHandler = object : SwipeToDelete(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = myAdapter
@@ -88,9 +89,8 @@ class MainActivity : AppCompatActivity() {
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(myRecycler)
+        myAdapter?.notifyDataSetChanged()
     }
-
-   // fun celector(n: MainItem): String = n.name
 
     private fun listenerEditName(){
         // это функция принимает ввод имени города и передает его в getWeatherFromName
@@ -105,6 +105,13 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
+    }
+
+    private fun refreshAdapter() {
+        val myAdapter = myRecycler.adapter
+        if (myAdapter != null) {
+            myAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun swipeRefresh(){
@@ -127,10 +134,14 @@ class MainActivity : AppCompatActivity() {
      )
     }
 
+    private fun itemsIterrator() {
+        items?.forEach { getWeatherListTemp(it.name) }
+        items?.clear()
+    }
+
     // выполнение и обработка запроса к API
     fun getWeatherFromName(city: String) {
-        val network = CurrentCall(applicationContext)
-        val call = network.clientCallCurrent(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+        val call = apiClient.currentWeather(city)
         call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
@@ -163,22 +174,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun itemsIterrator() {
-        val size = items!!.size - 1
-        val arr = arrayListOf<Int>()
-        val nameArr = arrayListOf<String>()
-        for(i in 0..size)
-            arr.add(i)
-        for(i in arr )
-            nameArr.add(items!![i].name)
-           for(ir in nameArr)
-              getWeatherFromTemp(ir)
-    }
-
     // выполнение и обработка запроса к API
-    private fun getWeatherFromTemp(city: String) {
-        val network = CurrentCall(applicationContext)
-        val call = network.clientCallCurrent(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
+    private fun getWeatherListTemp(city: String) {
+        val call = apiClient.currentWeather(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
         call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
@@ -189,6 +187,7 @@ class MainActivity : AppCompatActivity() {
                     val main = weather?.main
                     weather?.let {
                         presentDataTemp(it)
+                        progressBarMain.visibility = View.INVISIBLE
 
                     }
                 }
@@ -198,12 +197,8 @@ class MainActivity : AppCompatActivity() {
 
     // функция прописывающая отображение данных из датаклассов во вью
     private fun presentDataTemp(main: CurrentDataWeather) {
-        with(main) {
-            items?.removeAt(0)
             items?.add(MainItem(main.name, "${main.main.temp} °C"))
-           // textView.text = items.toString()
-          //  items?.sortBy {celector(it) }
-        }
+            refreshAdapter()
     }
 
     // функция сохранения данных sharedPreferences
@@ -228,7 +223,6 @@ class MainActivity : AppCompatActivity() {
             gson.fromJson(json, type)
     }
 
-    // жена попросила чтобы до добавления в избранное открывать детальный прогноз, кликнув на название населенного пункта вверху. Сделал так.
     fun onNameClicked(view: View) {
         if(city_name.text.toString() == "") {
         }

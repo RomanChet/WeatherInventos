@@ -164,7 +164,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/cityDescrSecond" />
 
             <ProgressBar
-                android:id="@+id/progressBar2"
+                android:id="@+id/progressBarSecond"
                 style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
