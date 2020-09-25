@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                city_name.text = ""
                currentTemp.text = ""
                descr.text = ""
+               itemsIterrator()
            }
         }
 
@@ -175,7 +176,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // выполнение и обработка запроса к API
-    fun getWeatherFromTemp(city: String) {
+    private fun getWeatherFromTemp(city: String) {
         val network = CurrentCall(applicationContext)
         val call = network.clientCallCurrent(city) // передаем город в качестве аргумента в функцию запроса, Call - Синхронно отправить запрос и вернуть его ответ.
         call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
@@ -200,6 +201,7 @@ class MainActivity : AppCompatActivity() {
         with(main) {
             items?.removeAt(0)
             items?.add(MainItem(main.name, "${main.main.temp} °C"))
+           // textView.text = items.toString()
           //  items?.sortBy {celector(it) }
         }
     }
