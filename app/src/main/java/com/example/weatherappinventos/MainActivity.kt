@@ -119,6 +119,7 @@ class MainActivity : AppCompatActivity() {
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
+            itemsIterrator()
             refreshAdapter()
         }
 
