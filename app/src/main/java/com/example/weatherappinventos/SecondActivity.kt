@@ -39,22 +39,16 @@ class SecondActivity : AppCompatActivity() {
 
     // обновление активити по свайпу
     private fun swipeRefreshSecond(){
-        handler = Handler()
-        val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.go_refresh)
-        swipeRefresh.setOnRefreshListener {
-            runnable = Runnable {
-                currentApiProcessing()
-                forecastApiProcessing()
-                swipeRefresh.isRefreshing = false
-            }
-            handler.postDelayed(
-                runnable, 800.toLong()
-            )
+        val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
+        val runnable = Runnable {
+            currentApiProcessing()
+            forecastApiProcessing()
+            swipeRefresh.isRefreshing = false
         }
 
+        swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
+
         go_refresh.setColorSchemeResources(
-            android.R.color.holo_blue_bright,
-            android.R.color.holo_green_light,
             android.R.color.holo_orange_light,
             android.R.color.holo_red_light
         )

@@ -17,7 +17,6 @@ import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -89,7 +88,6 @@ class MainActivity : AppCompatActivity() {
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(myRecycler)
-        myAdapter?.notifyDataSetChanged()
     }
 
     private fun listenerEditName(){
@@ -115,20 +113,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun swipeRefresh(){
-        handler = Handler()
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refreshMain)
         val runnable = Runnable {
             city_name.text = ""
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
+            refreshAdapter()
         }
 
      swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
 
      go_refreshMain.setColorSchemeResources(
-         android.R.color.holo_blue_bright,
-         android.R.color.holo_green_light,
          android.R.color.holo_orange_light,
          android.R.color.holo_red_light
      )
@@ -169,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             else {
                 city_name.text = main.name
                 currentTemp.text = "${main.main.temp} °C"
-                 descr.text = main.weather[0].description
+                descr.text = main.weather[0].description
             }
         }
     }
@@ -186,9 +182,8 @@ class MainActivity : AppCompatActivity() {
                     val weather: CurrentDataWeather? = response.body()
                     val main = weather?.main
                     weather?.let {
-                        presentDataTemp(it)
+                        updateDataTemp(it)
                         progressBarMain.visibility = View.INVISIBLE
-
                     }
                 }
             }
@@ -196,9 +191,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // функция прописывающая отображение данных из датаклассов во вью
-    private fun presentDataTemp(main: CurrentDataWeather) {
-            items?.add(MainItem(main.name, "${main.main.temp} °C"))
-            refreshAdapter()
+    private fun updateDataTemp(main: CurrentDataWeather) {
+        items?.add(MainItem(main.name, "${main.main.temp} °C"))
+        refreshAdapter()
     }
 
     // функция сохранения данных sharedPreferences
