@@ -8,7 +8,8 @@ import android.widget.TextView
 import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.R
 
-class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : RecyclerView.Adapter<MainAdapter.MainHolder>() {
+class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) :
+    RecyclerView.Adapter<MainAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         MainHolder(LayoutInflater.from(parent.context).inflate(R.layout.city_item, parent, false))
@@ -33,6 +34,7 @@ class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : Re
             }
         }
     }
+
     fun removeAt(position: Int) {
         items.removeAt(position)
         notifyItemRemoved(position)
@@ -42,5 +44,3 @@ class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) : Re
         fun onItemClicked(item: MainItem)
     }
 }
-
-// вывести элемент items[position]  это значение надо отправить в поле сити

@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class WeatherApiClient(context: Context) {
-    private val apiKey = context.resources.getString(R.string.api_key) // Api ключ с сайта openweathermap
+    private val apiKey = context.resources.getString(R.string.api_key) // Api ключ
     private val api = Retrofit.Builder()
         .baseUrl("https://api.openweathermap.org/data/2.5/")
         .addConverterFactory(GsonConverterFactory.create())

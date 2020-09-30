@@ -1,7 +1,6 @@
 package com.example.weatherappinventos
 
 import android.os.Bundle
-import android.os.Handler
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
@@ -17,14 +16,7 @@ import java.util.*
 
 class SecondActivity : AppCompatActivity() {
 
-    // переменные для обновления по свайпу вниз
-    private lateinit var handler: Handler
-    private lateinit var runnable: Runnable
     private lateinit var apiClient: WeatherApiClient
-
-    companion object {
-        const val PLACE_NAME = "place_name"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +24,17 @@ class SecondActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        currentApiProcessing()
-        forecastApiProcessing()
+        processCurrentApi()
+        processForecastApi()
         swipeRefreshSecond()
     }
 
     // обновление активити по свайпу
-    private fun swipeRefreshSecond(){
+    private fun swipeRefreshSecond() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
-            currentApiProcessing()
-            forecastApiProcessing()
+            processCurrentApi()
+            processForecastApi()
             swipeRefresh.isRefreshing = false
         }
 
@@ -54,68 +46,72 @@ class SecondActivity : AppCompatActivity() {
         )
     }
 
-    private fun currentApiProcessing() {
-        val count : String? = intent.getStringExtra(PLACE_NAME)
-        val call = count?.let { apiClient.currentWeather(it) }
-        if (call != null) {
-            call.enqueue(object : Callback<CurrentDataWeather> { // объект для получения ответа
-                override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
-                    t?.printStackTrace()
-                }
-                override fun onResponse(call: Call<CurrentDataWeather>?, response: Response<CurrentDataWeather>?) {
-                    if (response != null) {
-                        val weather: CurrentDataWeather? = response.body()
-                        weather?.main
-                        weather?.let {
-                            presentData(it)
-                        }
+    private fun processCurrentApi() {
+        val count: String? = intent.getStringExtra(PLACE_NAME)
+        count?.let { apiClient.currentWeather(it) }?.enqueue(object :
+            Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
+                t?.printStackTrace()
+            }
+
+            override fun onResponse(
+                call: Call<CurrentDataWeather>?,
+                response: Response<CurrentDataWeather>?
+            ) {
+                if (response != null) {
+                    val weather: CurrentDataWeather? = response.body()
+                    weather?.main
+                    weather?.let {
+                        presentData(it)
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
-    private fun forecastApiProcessing() {
-        val countSecond : String? = intent.getStringExtra(PLACE_NAME)
-        val call = countSecond?.let { apiClient.weatherForecast(it) }
-        if (call != null) {
-            call.enqueue(object : Callback<ForecastDataWeather> { // объект для получения ответа
-                override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
-                    t?.printStackTrace()
-                }
-                override fun onResponse(call: Call<ForecastDataWeather>?, response: Response<ForecastDataWeather>?) {
-                    if (response != null) {
-                        val weatherSec: ForecastDataWeather? = response.body()
-                        weatherSec?.list?.get(0)?.main
-                        weatherSec?.let {
-                            weekDaysInstaller(it)
-                            iconsInstaller(it)
-                            downPresentData(it)
-                            progressBarSecond.visibility = View.INVISIBLE
-                        }
+    private fun processForecastApi() {
+        val countSecond: String? = intent.getStringExtra(PLACE_NAME)
+        countSecond?.let { apiClient.weatherForecast(it) }?.enqueue(object :
+            Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+            override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
+                t?.printStackTrace()
+            }
+
+            override fun onResponse(
+                call: Call<ForecastDataWeather>?,
+                response: Response<ForecastDataWeather>?
+            ) {
+                if (response != null) {
+                    val weatherSec: ForecastDataWeather? = response.body()
+                    weatherSec?.list?.get(0)?.main
+                    weatherSec?.let {
+                        showWeekDays(it)
+                        setIcons(it)
+                        showForecastData(it)
+                        progressBarSecond.visibility = View.INVISIBLE
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
-    private fun reduceFun (viewIcon: ImageView, nameIcon: String) {
-        viewIcon.setImageResource(weatherConditionIconResId(nameIcon))
+    private fun reduceIcons(viewIcon: ImageView, nameIcon: String) {
+        viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
     }
 
     // инцилизация и установка иконок погодных условий
-    fun iconsInstaller(main: ForecastDataWeather){
-        reduceFun(mainDescrImage, main.list[0].weather[0].icon)
-        reduceFun(firstDescrImage, main.list[7].weather[0].icon)
-        reduceFun(secondDescrImage, main.list[15].weather[0].icon)
-        reduceFun(thirdDescrImage, main.list[23].weather[0].icon)
-        reduceFun(fourthDescrImage, main.list[31].weather[0].icon)
-        reduceFun(fifthDescrImage, main.list[39].weather[0].icon)
+    fun setIcons(main: ForecastDataWeather) {
+        reduceIcons(mainDescrImage, main.list[0].weather[0].icon)
+        reduceIcons(firstDescrImage, main.list[7].weather[0].icon)
+        reduceIcons(secondDescrImage, main.list[15].weather[0].icon)
+        reduceIcons(thirdDescrImage, main.list[23].weather[0].icon)
+        reduceIcons(fourthDescrImage, main.list[31].weather[0].icon)
+        reduceIcons(fifthDescrImage, main.list[39].weather[0].icon)
     }
 
     // возвращает значение аргумента в зависимости от имени иконки
-    private fun weatherConditionIconResId(iconName: String): Int {
-       return when (iconName) {
+    private fun analyzeWeatherConditionIcon(iconName: String): Int {
+        return when (iconName) {
             "01d" -> R.drawable.r01d
             "01n" -> R.drawable.r01n
             "02d" -> R.drawable.r02d
@@ -140,7 +136,7 @@ class SecondActivity : AppCompatActivity() {
 
     // перевод и установка представляемых данных текущей температуры
     private fun presentData(main: CurrentDataWeather) {
-        val constPrDt =weekDayValue(main.dt)
+        val constPrDt = weekDayValue(main.dt)
         var st = constPrDt[0]
         var mounthName = constPrDt[1]
         val numberDay = constPrDt[2]
@@ -181,38 +177,38 @@ class SecondActivity : AppCompatActivity() {
 
     // извлекатель дня недели из UNIX даты
     private fun weekDayValue(unixTime: Long): List<String> {
-        val toUsualDate = Date(unixTime*1000).toString()
+        val toUsualDate = Date(unixTime * 1000).toString()
         return toUsualDate.split(" ")
     }
 
     // переводчик дней недели
-    private fun translatingWeekDays(weekDay: String): String {
+    private fun translateWeekDays(weekDay: String): String {
         return when (weekDay) {
-            "Mon" ->  "Понедельник"
-            "Tue" ->  "Вторник"
-            "Wed" ->  "Среда"
-            "Thu" ->  "Четверг"
-            "Fri" ->  "Пятница"
-            "Sat" ->  "Суббота"
-            "Sun" ->  "Воскресенье"
+            "Mon" -> "Понедельник"
+            "Tue" -> "Вторник"
+            "Wed" -> "Среда"
+            "Thu" -> "Четверг"
+            "Fri" -> "Пятница"
+            "Sat" -> "Суббота"
+            "Sun" -> "Воскресенье"
             else -> ""
         }
     }
 
-    private fun reduceDayWeek(dt: Long): String {
-        return translatingWeekDays(weekDayValue(dt)[0])
+    private fun translateWeekDays(dt: Long): String {
+        return translateWeekDays(weekDayValue(dt)[0])
     }
 
     // извлечение и перевод дней недели из приходящей в UNIX формате даты
-    fun weekDaysInstaller(main: ForecastDataWeather) {
-        nameDay1.text = "${reduceDayWeek(main.list[7].dt)}:"
-        nameDay2.text = "${reduceDayWeek(main.list[15].dt)}:"
-        nameDay3.text = "${reduceDayWeek(main.list[23].dt)}:"
-        nameDay4.text = "${reduceDayWeek(main.list[31].dt)}:"
-        nameDay5.text = "${reduceDayWeek(main.list[39].dt)}:"
+    fun showWeekDays(main: ForecastDataWeather) {
+        nameDay1.text = "${translateWeekDays(main.list[7].dt)}:"
+        nameDay2.text = "${translateWeekDays(main.list[15].dt)}:"
+        nameDay3.text = "${translateWeekDays(main.list[23].dt)}:"
+        nameDay4.text = "${translateWeekDays(main.list[31].dt)}:"
+        nameDay5.text = "${translateWeekDays(main.list[39].dt)}:"
 }
     // представление данных, прогнозируеммой погоды
-    fun downPresentData(main: ForecastDataWeather){
+    fun showForecastData(main: ForecastDataWeather) {
         // прогноз температуры на 5 дней (1 колонка)
         dayOneTemp.text = "${main.list[7].main.temp} °C"
         dayTwoTemp.text = "${main.list[15].main.temp} °C"
@@ -233,5 +229,9 @@ class SecondActivity : AppCompatActivity() {
         descrText3.text = main.list[23].weather[0].description
         descrText4.text = main.list[31].weather[0].description
         descrText5.text = main.list[39].weather[0].description
+    }
+
+    companion object {
+        const val PLACE_NAME = "place_name"
     }
 }
