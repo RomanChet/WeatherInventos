@@ -1,10 +1,15 @@
 package com.example.weatherappinventos
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.os.Handler
+import android.view.Gravity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
@@ -14,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
+@Suppress("DEPRECATION")
 class SecondActivity : AppCompatActivity() {
 
     private lateinit var apiClient: WeatherApiClient
@@ -29,12 +35,31 @@ class SecondActivity : AppCompatActivity() {
         swipeRefreshSecond()
     }
 
+    private fun checkNetwork() {
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected) {
+        } else {
+            Handler().postDelayed({
+                progressBarSecond.visibility = View.INVISIBLE
+            }, 1000)
+            val toast = Toast.makeText(
+                baseContext,
+                "Подключение к сети отсутствует! Проверьте соединение и обновите страницу!",
+                Toast.LENGTH_SHORT
+            )
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
+        }
+    }
+
     // обновление активити по свайпу
     private fun swipeRefreshSecond() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
             processCurrentApi()
             processForecastApi()
+            checkNetwork()
             swipeRefresh.isRefreshing = false
         }
 
@@ -47,6 +72,7 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun processCurrentApi() {
+        checkNetwork()
         val count: String? = intent.getStringExtra(PLACE_NAME)
         count?.let { apiClient.currentWeather(it) }?.enqueue(object :
             Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
@@ -206,7 +232,8 @@ class SecondActivity : AppCompatActivity() {
         nameDay3.text = "${translateWeekDays(main.list[23].dt)}:"
         nameDay4.text = "${translateWeekDays(main.list[31].dt)}:"
         nameDay5.text = "${translateWeekDays(main.list[39].dt)}:"
-}
+    }
+
     // представление данных, прогнозируеммой погоды
     fun showForecastData(main: ForecastDataWeather) {
         // прогноз температуры на 5 дней (1 колонка)

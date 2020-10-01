@@ -1,14 +1,19 @@
 package com.example.weatherappinventos
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.MainItem
@@ -20,6 +25,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     private var items: MutableList<MainItem>? = ArrayList()
@@ -32,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
+        checkNetwork()
         loadData()
         swipeRefresh()
         listenerEditName()
@@ -80,6 +88,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        iterateItems()
+        checkNetwork()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveData()
+    }
+
+    private fun checkNetwork() {
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected) {
+            items
+        } else {
+            Handler().postDelayed({
+                progressBarMain.visibility = View.INVISIBLE
+            }, 1000)
+            val toast = Toast.makeText(
+                baseContext,
+                "Подключение к сети отсутствует! Проверьте соединение и обновите страницу!",
+                Toast.LENGTH_SHORT
+            )
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
+        }
+    }
+
+    private fun saveData() {
+        val sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(items)
+        editor.putString("task list", json)
+        editor.apply()
+    }
+
     // функция чтения данных sharedPreferences
     private fun loadData() {
         val sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE)
@@ -105,6 +152,7 @@ class MainActivity : AppCompatActivity() {
             swipeRefresh.isRefreshing = false
             iterateItems()
             refreshAdapter()
+            checkNetwork()
         }
 
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
@@ -188,7 +236,6 @@ class MainActivity : AppCompatActivity() {
                     weather?.let {
                         progressBarMain.visibility = View.INVISIBLE
                         setupDataTemp(it)
-
                     }
                 }
             }
@@ -198,12 +245,11 @@ class MainActivity : AppCompatActivity() {
     // функция прописывающая отображение данных из датаклассов во вью
     private fun setupDataTemp(main: CurrentDataWeather) {
         val index =
-            items?.indexOfFirst { // Возвращает индекс первого элемента, соответствующего данному условию (it.name == main.name)
+            items!!.indexOfFirst {
                 it.name == main.name
             }
-        if (index != null) {
-            items?.removeAt(index)
-            items?.add(index, MainItem(main.name, "${main.main.temp} °C"))
+        if (index != -1) {
+            items?.set(index, MainItem(main.name, "${main.main.temp} °C"))
         }
         refreshAdapter()
     }
@@ -221,20 +267,5 @@ class MainActivity : AppCompatActivity() {
             // значение, которое потом получается при приеме ключа другим активити)
             startActivity(goTestActivityIntent) // запуск активити
         }
-    }
-
-    // функция сохранения данных sharedPreferences
-    private fun saveData() {
-        val sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(items)
-        editor.putString("task list", json)
-        editor.apply()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        saveData()
     }
 }
