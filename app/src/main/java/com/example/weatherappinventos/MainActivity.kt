@@ -246,7 +246,6 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
-                checkNetwork()
             }
 
             override fun onResponse(

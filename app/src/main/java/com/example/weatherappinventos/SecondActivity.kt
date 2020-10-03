@@ -135,7 +135,6 @@ class SecondActivity : AppCompatActivity() {
             Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
-                checkNetwork()
             }
 
             override fun onResponse(
