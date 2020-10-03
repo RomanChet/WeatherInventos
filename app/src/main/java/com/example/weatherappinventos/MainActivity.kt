@@ -21,6 +21,7 @@ import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -118,12 +119,25 @@ class MainActivity : AppCompatActivity() {
             }, 1000)
             val toast = Toast.makeText(
                 baseContext,
-                "Подключение к сети отсутствует! Проверьте соединение и обновите страницу!",
+                "Ошибка загрузки! Попробуйте обновить страницу!",
                 Toast.LENGTH_SHORT
             )
             toast.setGravity(Gravity.CENTER, 0, 0)
             toast.show()
         }
+    }
+
+    private fun invalidRequest() {
+        Handler().postDelayed({
+            progressBarSecond.visibility = View.INVISIBLE
+        }, 1000)
+        val toast = Toast.makeText(
+            baseContext,
+            "Ошибка загрузки! Попробуйте обновить страницу!",
+            Toast.LENGTH_SHORT
+        )
+        toast.setGravity(Gravity.CENTER, 0, 0)
+        toast.show()
     }
 
     private fun saveData() {
@@ -192,19 +206,19 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> {
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
+                invalidRequest()
             }
 
             override fun onResponse(
                 call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
             ) {
-                if (response.isSuccessful) {
-                    val weather: CurrentDataWeather? = response.body()
-                    val main = weather?.main
-                    weather?.let {
-                        presentData(it)
-                    }
+                val weather: CurrentDataWeather? = response.body()
+                val main = weather?.main
+                weather?.let {
+                    presentData(it)
                 }
             }
+
         })
     }
 
@@ -232,19 +246,18 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
+                checkNetwork()
             }
 
             override fun onResponse(
                 call: Call<CurrentDataWeather>,
                 response: Response<CurrentDataWeather>
             ) {
-                if (response.isSuccessful) {
-                    val weather: CurrentDataWeather? = response.body()
-                    val main = weather?.main
-                    weather?.let {
-                        progressBarMain.visibility = View.INVISIBLE
-                        setupDataTemp(it)
-                    }
+                val weather: CurrentDataWeather? = response.body()
+                val main = weather?.main
+                weather?.let {
+                    progressBarMain.visibility = View.INVISIBLE
+                    setupDataTemp(it)
                 }
             }
         })

@@ -67,12 +67,25 @@ class SecondActivity : AppCompatActivity() {
             }, 1000)
             val toast = Toast.makeText(
                 baseContext,
-                "Подключение к сети отсутствует! Проверьте соединение и обновите страницу!",
+                "Ошибка загрузки! Попробуйте обновить страницу!!",
                 Toast.LENGTH_SHORT
             )
             toast.setGravity(Gravity.CENTER, 0, 0)
             toast.show()
         }
+    }
+
+    fun invalidRequest() {
+        Handler().postDelayed({
+            progressBarSecond.visibility = View.INVISIBLE
+        }, 1000)
+        val toast = Toast.makeText(
+            baseContext,
+            "Ошибка загрузки! Попробуйте обновить страницу!",
+            Toast.LENGTH_SHORT
+        )
+        toast.setGravity(Gravity.CENTER, 0, 0)
+        toast.show()
     }
 
     // обновление активити по свайпу
@@ -81,7 +94,6 @@ class SecondActivity : AppCompatActivity() {
         val runnable = Runnable {
             processCurrentApi()
             processForecastApi()
-            checkNetwork()
             swipeRefresh.isRefreshing = false
         }
 
@@ -94,12 +106,12 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun processCurrentApi() {
-        checkNetwork()
         val count: String? = intent.getStringExtra(PLACE_NAME)
         count?.let { apiClient.currentWeather(it) }?.enqueue(object :
             Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
+                invalidRequest()
             }
 
             override fun onResponse(
@@ -123,6 +135,7 @@ class SecondActivity : AppCompatActivity() {
             Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
+                checkNetwork()
             }
 
             override fun onResponse(
