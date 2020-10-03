@@ -25,11 +25,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
-    private var items: MutableList<MainItem>? = ArrayList()
+    private var items: MutableList<MainItem> = ArrayList()
 
     private lateinit var apiClient: WeatherApiClient
 
@@ -39,27 +38,25 @@ class MainActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        checkNetwork()
         loadData()
         swipeRefresh()
         listenerEditName()
 
-        val myAdapter = items?.let {
-            MainAdapter(it, object : MainAdapter.Callback {
-                override fun onItemClicked(item: MainItem) {
-                    val goSecondActivityIntent = Intent(
-                        this@MainActivity,
-                        SecondActivity::class.java
-                    )
-                    val counterString = item.name // преобразование объекта в строку
-                    goSecondActivityIntent.putExtra(
-                        SecondActivity.PLACE_NAME,
-                        counterString
-                    )
-                    startActivity(goSecondActivityIntent) // запуск активити
-                }
-            })
-        }
+        val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
+            override fun onItemClicked(item: MainItem) {
+                val goSecondActivityIntent = Intent(
+                    this@MainActivity,
+                    SecondActivity::class.java
+                )
+                val counterString = item.name
+                goSecondActivityIntent.putExtra(
+                    SecondActivity.PLACE_NAME,
+                    counterString
+                )
+                startActivity(goSecondActivityIntent)
+                finish()
+            }
+        })
 
         myRecycler.adapter = myAdapter
 
@@ -67,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         val swipeHandler = object : SwipeToDelete(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                myAdapter?.removeAt(viewHolder.adapterPosition)
+                myAdapter.removeAt(viewHolder.adapterPosition)
             }
         }
 
@@ -78,19 +75,30 @@ class MainActivity : AppCompatActivity() {
             if (city_name.text.toString() == "") {
                 items
             } else {
-                items?.add(MainItem(city_name.text.toString(), currentTemp.text.toString()))
+                items.add(MainItem(city_name.text.toString(), currentTemp.text.toString()))
                 cityNameText.text = null // обнуление строки ввода для удобства
                 city_name.text = ""
                 currentTemp.text = ""
                 descr.text = ""
-                myAdapter?.notifyDataSetChanged()
+                myAdapter.notifyDataSetChanged()
             }
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        iterateItems()
+    override fun onStart() {
+        super.onStart()
+
+        val returnedName: String? = intent.getStringExtra(RETURNED_PLACE_NAME)
+        val returnedTemp: String? = intent.getStringExtra(RETURNED_PLACE_TEMP)
+
+        val index =
+            items.indexOfFirst {
+                it.name == returnedName
+            }
+        if (index != -1) {
+            items[index] = MainItem(returnedName.toString(), returnedTemp.toString())
+        }
+        refreshAdapter()
         checkNetwork()
     }
 
@@ -132,8 +140,8 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE)
         val gson = Gson()
         val json = sharedPreferences.getString("task list", items.toString())
-        val type = object: TypeToken<ArrayList<MainItem>>() {}.type
-        items = if(json == null)
+        val type = object : TypeToken<ArrayList<MainItem>>() {}.type
+        items = if (json == null)
             ArrayList()
         else
             gson.fromJson(json, type)
@@ -181,15 +189,15 @@ class MainActivity : AppCompatActivity() {
 
     fun getWeatherFromName(city: String) {
         val call = apiClient.currentWeather(city)
-        call.enqueue(object : Callback<CurrentDataWeather> { // асинхронное выполнение запроса
-            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
+        call.enqueue(object : Callback<CurrentDataWeather> {
+            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
             }
 
             override fun onResponse(
-                call: Call<CurrentDataWeather>?, response: Response<CurrentDataWeather>?
+                call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
             ) {
-                if (response != null) {
+                if (response.isSuccessful) {
                     val weather: CurrentDataWeather? = response.body()
                     val main = weather?.main
                     weather?.let {
@@ -215,22 +223,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun iterateItems() {
-        items?.forEach { getWeatherListTemp(it.name) }
+        items.forEach { getWeatherListTemp(it.name) }
     }
 
     // выполнение и обработка запроса к API
     private fun getWeatherListTemp(city: String) {
         val call = apiClient.currentWeather(city)
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
-            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
+            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
             }
 
             override fun onResponse(
-                call: Call<CurrentDataWeather>?,
-                response: Response<CurrentDataWeather>?
+                call: Call<CurrentDataWeather>,
+                response: Response<CurrentDataWeather>
             ) {
-                if (response != null) {
+                if (response.isSuccessful) {
                     val weather: CurrentDataWeather? = response.body()
                     val main = weather?.main
                     weather?.let {
@@ -244,12 +252,13 @@ class MainActivity : AppCompatActivity() {
 
     // функция прописывающая отображение данных из датаклассов во вью
     private fun setupDataTemp(main: CurrentDataWeather) {
+
         val index =
-            items!!.indexOfFirst {
+            items.indexOfFirst {
                 it.name == main.name
             }
         if (index != -1) {
-            items?.set(index, MainItem(main.name, "${main.main.temp} °C"))
+            items[index] = MainItem(main.name, "${main.main.temp} °C")
         }
         refreshAdapter()
     }
@@ -263,9 +272,14 @@ class MainActivity : AppCompatActivity() {
             goTestActivityIntent.putExtra(
                 SecondActivity.PLACE_NAME,
                 counterString
-            ) // добавляет значение в интент (ключ, и соответсвующее ему
-            // значение, которое потом получается при приеме ключа другим активити)
-            startActivity(goTestActivityIntent) // запуск активити
+            )
+            startActivity(goTestActivityIntent)
+            finish()
         }
+    }
+
+    companion object {
+        const val RETURNED_PLACE_NAME = "returned_place_name"
+        const val RETURNED_PLACE_TEMP = "returned_place_temp"
     }
 }

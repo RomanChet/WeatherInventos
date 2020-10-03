@@ -1,6 +1,7 @@
 package com.example.weatherappinventos
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +14,7 @@ import android.widget.Toast
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,6 +35,26 @@ class SecondActivity : AppCompatActivity() {
         processCurrentApi()
         processForecastApi()
         swipeRefreshSecond()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val returnDataIntent = Intent(
+            this,
+            MainActivity::class.java
+        )
+
+        val returnNameString = cityNameSecond.text
+        val returnTempString = cityTempSecond.text
+        returnDataIntent.putExtra(
+            MainActivity.RETURNED_PLACE_NAME,
+            returnNameString
+        )
+        returnDataIntent.putExtra(
+            MainActivity.RETURNED_PLACE_TEMP,
+            returnTempString
+        )
+        startActivity(returnDataIntent)
     }
 
     private fun checkNetwork() {
