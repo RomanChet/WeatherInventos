@@ -100,7 +100,6 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName.toString(), returnedTemp.toString())
         }
         refreshAdapter()
-        checkNetwork()
     }
 
     override fun onPause() {
@@ -174,7 +173,6 @@ class MainActivity : AppCompatActivity() {
             swipeRefresh.isRefreshing = false
             iterateItems()
             refreshAdapter()
-            checkNetwork()
         }
 
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
