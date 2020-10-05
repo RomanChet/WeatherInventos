@@ -1,8 +1,6 @@
 package com.example.weatherappinventos
 
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -21,7 +19,6 @@ import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -100,8 +97,8 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName.toString(), returnedTemp.toString())
         }
         refreshAdapter()
-        getWeatherFromName("_test")
 
+        getWeatherFromName("_test")
     }
 
     override fun onPause() {
@@ -278,3 +275,4 @@ class MainActivity : AppCompatActivity() {
         const val RETURNED_PLACE_NAME = "returned_place_name"
         const val RETURNED_PLACE_TEMP = "returned_place_temp"
     }
+}
