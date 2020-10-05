@@ -278,4 +278,3 @@ class MainActivity : AppCompatActivity() {
         const val RETURNED_PLACE_NAME = "returned_place_name"
         const val RETURNED_PLACE_TEMP = "returned_place_temp"
     }
-}
