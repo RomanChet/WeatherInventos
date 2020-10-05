@@ -1,6 +1,8 @@
 package com.example.weatherappinventos
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -19,6 +21,7 @@ import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -97,8 +100,6 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName.toString(), returnedTemp.toString())
         }
         refreshAdapter()
-
-        getWeatherFromName("_test")
     }
 
     override fun onPause() {
@@ -106,8 +107,29 @@ class MainActivity : AppCompatActivity() {
         saveData()
     }
 
-    private fun invalidRequest() {
+    private fun checkNetwork() {
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected) {
+            items
+        } else {
+            Handler().postDelayed({
+                progressBarMain.visibility = View.INVISIBLE
+            }, 1000)
+            val toast = Toast.makeText(
+                baseContext,
+                "Ошибка загрузки! Попробуйте обновить страницу!",
+                Toast.LENGTH_SHORT
+            )
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
+        }
+    }
 
+    private fun invalidRequest() {
+        Handler().postDelayed({
+            progressBarSecond.visibility = View.INVISIBLE
+        }, 1000)
         val toast = Toast.makeText(
             baseContext,
             "Ошибка загрузки! Попробуйте обновить страницу!",
@@ -222,10 +244,6 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
-
-                Handler().postDelayed({
-                    progressBarMain.visibility = View.INVISIBLE
-                }, 1000)
             }
 
             override fun onResponse(
