@@ -14,7 +14,7 @@ import android.widget.Toast
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
-import kotlinx.android.synthetic.main.activity_main.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,13 +32,21 @@ class SecondActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        processCurrentApi()
-        processForecastApi()
+        // проверка наличия интернет-соединения до выполнения запросов
+        if (checkNetwork()) {
+            processCurrentApi()
+            processForecastApi()
+        } else {
+            noInternetInfo(true)
+        }
+
         swipeRefreshSecond()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
+
+
         val returnDataIntent = Intent(
             this,
             MainActivity::class.java
@@ -57,17 +65,37 @@ class SecondActivity : AppCompatActivity() {
         startActivity(returnDataIntent)
     }
 
-    private fun checkNetwork() {
+    // локальная проверка интернет-соединеия
+    private fun checkNetwork(): Boolean {
         val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
-        if (activeNetwork != null && activeNetwork.isConnected) {
+        return activeNetwork != null && activeNetwork.isConnected
+    }
+
+    private fun checkTransmissionErrors() {
+        if (checkNetwork()) {
+            noInternetInfo(true)
         } else {
-            Handler().postDelayed({
-                progressBarSecond.visibility = View.INVISIBLE
-            }, 1000)
+            noInternetInfo(false)
+        }
+    }
+
+    private fun noInternetInfo(value: Boolean) {
+        Handler().postDelayed({
+            progressBarSecond.visibility = View.INVISIBLE
+        }, 1000)
+        if (value) {
             val toast = Toast.makeText(
                 baseContext,
-                "Ошибка загрузки! Попробуйте обновить страницу!!",
+                "Ошибка интернет-соединения!",
+                Toast.LENGTH_SHORT
+            )
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
+        } else {
+            val toast = Toast.makeText(
+                baseContext,
+                "Ошибка загрузки! Попробуйте обновить страницу!",
                 Toast.LENGTH_SHORT
             )
             toast.setGravity(Gravity.CENTER, 0, 0)
@@ -75,25 +103,17 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
-    fun invalidRequest() {
-        Handler().postDelayed({
-            progressBarSecond.visibility = View.INVISIBLE
-        }, 1000)
-        val toast = Toast.makeText(
-            baseContext,
-            "Ошибка загрузки! Попробуйте обновить страницу!",
-            Toast.LENGTH_SHORT
-        )
-        toast.setGravity(Gravity.CENTER, 0, 0)
-        toast.show()
-    }
-
     // обновление активити по свайпу
     private fun swipeRefreshSecond() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
-            processCurrentApi()
-            processForecastApi()
+            if (checkNetwork()) {
+                processCurrentApi()
+                processForecastApi()
+            } else {
+                noInternetInfo(true)
+            }
+
             swipeRefresh.isRefreshing = false
         }
 
@@ -111,7 +131,7 @@ class SecondActivity : AppCompatActivity() {
             Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
-                invalidRequest()
+                checkTransmissionErrors()
             }
 
             override fun onResponse(
@@ -135,6 +155,7 @@ class SecondActivity : AppCompatActivity() {
             Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
+                checkTransmissionErrors()
             }
 
             override fun onResponse(

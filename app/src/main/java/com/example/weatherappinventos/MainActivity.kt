@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
 
         loadData()
         swipeRefresh()
-        listenerEditName()
 
         val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
             override fun onItemClicked(item: MainItem) {
@@ -61,7 +60,14 @@ class MainActivity : AppCompatActivity() {
 
         myRecycler.adapter = myAdapter
 
-        iterateItems()
+        // проверка наличия интернет-соединения до выполнения запросов
+        if (checkNetwork()) {
+            listenerEditName()
+            iterateItems()
+        } else {
+            noInternetInfo(true)
+        }
+
 
         val swipeHandler = object : SwipeToDelete(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -107,15 +113,19 @@ class MainActivity : AppCompatActivity() {
         saveData()
     }
 
-    private fun checkNetwork() {
-        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        if (activeNetwork != null && activeNetwork.isConnected) {
-            items
+    private fun noInternetInfo(value: Boolean) {
+        Handler().postDelayed({
+            progressBarMain.visibility = View.INVISIBLE
+        }, 1000)
+        if (value) {
+            val toast = Toast.makeText(
+                baseContext,
+                "Ошибка интернет-соединения!",
+                Toast.LENGTH_SHORT
+            )
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
         } else {
-            Handler().postDelayed({
-                progressBarMain.visibility = View.INVISIBLE
-            }, 1000)
             val toast = Toast.makeText(
                 baseContext,
                 "Ошибка загрузки! Попробуйте обновить страницу!",
@@ -126,17 +136,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun invalidRequest() {
-        Handler().postDelayed({
-            progressBarSecond.visibility = View.INVISIBLE
-        }, 1000)
-        val toast = Toast.makeText(
-            baseContext,
-            "Ошибка загрузки! Попробуйте обновить страницу!",
-            Toast.LENGTH_SHORT
-        )
-        toast.setGravity(Gravity.CENTER, 0, 0)
-        toast.show()
+    // локальная проверка интернет-соединеия
+    private fun checkNetwork(): Boolean {
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
+    }
+
+    private fun checkTransmissionErrors() {
+        if (checkNetwork()) {
+            noInternetInfo(true)
+        } else {
+            noInternetInfo(false)
+        }
     }
 
     private fun saveData() {
@@ -171,8 +183,14 @@ class MainActivity : AppCompatActivity() {
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
-            iterateItems()
-            refreshAdapter()
+
+            if (checkNetwork()) {
+                listenerEditName()
+                iterateItems()
+                refreshAdapter()
+            } else {
+                noInternetInfo(true)
+            }
         }
 
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
@@ -204,7 +222,7 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> {
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
-                invalidRequest()
+                checkTransmissionErrors()
             }
 
             override fun onResponse(
@@ -244,6 +262,7 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
+                checkTransmissionErrors()
             }
 
             override fun onResponse(
