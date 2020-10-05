@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName.toString(), returnedTemp.toString())
         }
         refreshAdapter()
-        checkNetwork()
+        getWeatherFromName("_test")
+
     }
 
     override fun onPause() {
@@ -108,29 +109,8 @@ class MainActivity : AppCompatActivity() {
         saveData()
     }
 
-    private fun checkNetwork() {
-        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        if (activeNetwork != null && activeNetwork.isConnected) {
-            items
-        } else {
-            Handler().postDelayed({
-                progressBarMain.visibility = View.INVISIBLE
-            }, 1000)
-            val toast = Toast.makeText(
-                baseContext,
-                "Ошибка загрузки! Попробуйте обновить страницу!",
-                Toast.LENGTH_SHORT
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
-        }
-    }
-
     private fun invalidRequest() {
-        Handler().postDelayed({
-            progressBarSecond.visibility = View.INVISIBLE
-        }, 1000)
+
         val toast = Toast.makeText(
             baseContext,
             "Ошибка загрузки! Попробуйте обновить страницу!",
@@ -174,7 +154,7 @@ class MainActivity : AppCompatActivity() {
             swipeRefresh.isRefreshing = false
             iterateItems()
             refreshAdapter()
-            checkNetwork()
+            invalidRequest()
         }
 
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
@@ -246,6 +226,10 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                 t?.printStackTrace()
+
+                Handler().postDelayed({
+                    progressBarMain.visibility = View.INVISIBLE
+                }, 1000)
             }
 
             override fun onResponse(
