@@ -151,7 +151,6 @@ class MainActivity : AppCompatActivity() {
             swipeRefresh.isRefreshing = false
             iterateItems()
             refreshAdapter()
-            invalidRequest()
         }
 
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
