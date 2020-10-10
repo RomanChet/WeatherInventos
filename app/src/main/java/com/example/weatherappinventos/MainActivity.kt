@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var apiClient: WeatherApiClient
 
+    private var counter = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,12 +62,12 @@ class MainActivity : AppCompatActivity() {
 
         myRecycler.adapter = myAdapter
 
-        // проверка наличия интернет-соединения до выполнения запросов
         if (checkNetwork()) {
             listenerEditName()
             iterateItems()
         } else {
-            noInternetInfo(true)
+            noDataInfo(true)
+            listenerEditName()
         }
 
 
@@ -113,27 +115,30 @@ class MainActivity : AppCompatActivity() {
         saveData()
     }
 
-    private fun noInternetInfo(value: Boolean) {
-        Handler().postDelayed({
-            progressBarMain.visibility = View.INVISIBLE
-        }, 1000)
-        if (value) {
-            val toast = Toast.makeText(
-                baseContext,
-                "Ошибка интернет-соединения!",
-                Toast.LENGTH_SHORT
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
-        } else {
-            val toast = Toast.makeText(
-                baseContext,
-                "Ошибка загрузки! Попробуйте обновить страницу!",
-                Toast.LENGTH_SHORT
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
+    private fun noDataInfo(value: Boolean) {
+        if (counter < 1) {
+            Handler().postDelayed({
+                progressBarMain.visibility = View.INVISIBLE
+            }, 1000)
+            if (value) {
+                val toast = Toast.makeText(
+                    baseContext,
+                    "Ошибка интернет-соединения!",
+                    Toast.LENGTH_SHORT
+                )
+                toast.setGravity(Gravity.CENTER, 0, 0)
+                toast.show()
+            } else {
+                val toast = Toast.makeText(
+                    baseContext,
+                    "Ошибка загрузки! Попробуйте обновить страницу!",
+                    Toast.LENGTH_SHORT
+                )
+                toast.setGravity(Gravity.CENTER, 0, 0)
+                toast.show()
+            }
         }
+        counter++
     }
 
     // локальная проверка интернет-соединеия
@@ -145,9 +150,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkTransmissionErrors() {
         if (checkNetwork()) {
-            noInternetInfo(true)
+            noDataInfo(false)
         } else {
-            noInternetInfo(false)
+            noDataInfo(true)
         }
     }
 
@@ -183,14 +188,10 @@ class MainActivity : AppCompatActivity() {
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
-
-            if (checkNetwork()) {
-                listenerEditName()
-                iterateItems()
-                refreshAdapter()
-            } else {
-                noInternetInfo(true)
-            }
+            counter = 0
+            listenerEditName()
+            iterateItems()
+            refreshAdapter()
         }
 
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
@@ -234,7 +235,6 @@ class MainActivity : AppCompatActivity() {
                     presentData(it)
                 }
             }
-
         })
     }
 
@@ -274,6 +274,7 @@ class MainActivity : AppCompatActivity() {
                 weather?.let {
                     progressBarMain.visibility = View.INVISIBLE
                     setupDataTemp(it)
+                    counter = 0
                 }
             }
         })

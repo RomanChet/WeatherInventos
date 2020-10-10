@@ -32,13 +32,8 @@ class SecondActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        // проверка наличия интернет-соединения до выполнения запросов
-        if (checkNetwork()) {
-            processCurrentApi()
-            processForecastApi()
-        } else {
-            noInternetInfo(true)
-        }
+        processCurrentApi()
+        processForecastApi()
 
         swipeRefreshSecond()
     }
@@ -74,13 +69,13 @@ class SecondActivity : AppCompatActivity() {
 
     private fun checkTransmissionErrors() {
         if (checkNetwork()) {
-            noInternetInfo(true)
+            noDataInfo(false)
         } else {
-            noInternetInfo(false)
+            noDataInfo(true)
         }
     }
 
-    private fun noInternetInfo(value: Boolean) {
+    private fun noDataInfo(value: Boolean) {
         Handler().postDelayed({
             progressBarSecond.visibility = View.INVISIBLE
         }, 1000)
@@ -111,7 +106,7 @@ class SecondActivity : AppCompatActivity() {
                 processCurrentApi()
                 processForecastApi()
             } else {
-                noInternetInfo(true)
+                noDataInfo(true)
             }
 
             swipeRefresh.isRefreshing = false
