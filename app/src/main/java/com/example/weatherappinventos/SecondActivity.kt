@@ -25,6 +25,7 @@ import java.util.*
 class SecondActivity : AppCompatActivity() {
 
     private lateinit var apiClient: WeatherApiClient
+    private var counter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,39 +77,38 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun noDataInfo(value: Boolean) {
-        Handler().postDelayed({
-            progressBarSecond.visibility = View.INVISIBLE
-        }, 1000)
-        if (value) {
-            val toast = Toast.makeText(
-                baseContext,
-                "Ошибка интернет-соединения!",
-                Toast.LENGTH_SHORT
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
-        } else {
-            val toast = Toast.makeText(
-                baseContext,
-                "Ошибка загрузки! Попробуйте обновить страницу!",
-                Toast.LENGTH_SHORT
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
+        if (counter < 1) {
+            Handler().postDelayed({
+                progressBarSecond.visibility = View.INVISIBLE
+            }, 1000)
+            if (value) {
+                val toast = Toast.makeText(
+                    baseContext,
+                    "Ошибка интернет-соединения!",
+                    Toast.LENGTH_SHORT
+                )
+                toast.setGravity(Gravity.CENTER, 0, 0)
+                toast.show()
+            } else {
+                val toast = Toast.makeText(
+                    baseContext,
+                    "Ошибка загрузки! Попробуйте обновить страницу!",
+                    Toast.LENGTH_SHORT
+                )
+                toast.setGravity(Gravity.CENTER, 0, 0)
+                toast.show()
+            }
         }
+        counter++
     }
 
     // обновление активити по свайпу
     private fun swipeRefreshSecond() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
-            if (checkNetwork()) {
-                processCurrentApi()
-                processForecastApi()
-            } else {
-                noDataInfo(true)
-            }
-
+            counter = 0
+            processCurrentApi()
+            processForecastApi()
             swipeRefresh.isRefreshing = false
         }
 
