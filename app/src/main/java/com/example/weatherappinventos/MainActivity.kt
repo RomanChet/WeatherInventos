@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
+import com.example.weatherappinventos.database.WeatherDatabase
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     private var items: MutableList<MainItem> = ArrayList()
 
     private lateinit var apiClient: WeatherApiClient
-
     private var counter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,20 +55,10 @@ class MainActivity : AppCompatActivity() {
                     counterString
                 )
                 startActivity(goSecondActivityIntent)
-                finish()
             }
         })
 
         myRecycler.adapter = myAdapter
-
-        if (checkNetwork()) {
-            listenerEditName()
-            iterateItems()
-        } else {
-            noDataInfo(true)
-            listenerEditName()
-        }
-
 
         val swipeHandler = object : SwipeToDelete(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -94,20 +83,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
-        val returnedName: String? = intent.getStringExtra(RETURNED_PLACE_NAME)
-        val returnedTemp: String? = intent.getStringExtra(RETURNED_PLACE_TEMP)
+        counter = 0
 
-        val index =
-            items.indexOfFirst {
-                it.name == returnedName
-            }
-        if (index != -1) {
-            items[index] = MainItem(returnedName.toString(), returnedTemp.toString())
+        val dbDao = WeatherDatabase.getInstance(this).currentDao()
+        val dbGetFirst = dbDao.getAll()[0]
+
+        val returnedName = dbGetFirst.name
+        val returnedTemp = dbGetFirst.temp
+
+        val index = items.indexOfFirst {
+            it.name == returnedName
         }
-        refreshAdapter()
+        if (index != -1) {
+            items[index] = MainItem(returnedName, returnedTemp)
+            refreshAdapter()
+        }
+
+        listenerEditName()
+
+        if (checkNetwork()) {
+            iterateItems()
+        } else {
+            noDataInfo(true)
+        }
     }
 
     override fun onPause() {
@@ -165,7 +166,6 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    // функция чтения данных sharedPreferences
     private fun loadData() {
         val sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE)
         val gson = Gson()
@@ -184,11 +184,11 @@ class MainActivity : AppCompatActivity() {
     private fun swipeRefresh() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refreshMain)
         val runnable = Runnable {
+            counter = 0
             city_name.text = ""
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
-            counter = 0
             listenerEditName()
             iterateItems()
             refreshAdapter()
@@ -304,12 +304,6 @@ class MainActivity : AppCompatActivity() {
                 counterString
             )
             startActivity(goTestActivityIntent)
-            finish()
         }
-    }
-
-    companion object {
-        const val RETURNED_PLACE_NAME = "returned_place_name"
-        const val RETURNED_PLACE_TEMP = "returned_place_temp"
     }
 }

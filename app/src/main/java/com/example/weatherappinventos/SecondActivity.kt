@@ -1,7 +1,6 @@
 package com.example.weatherappinventos
 
 import android.content.Context
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
@@ -12,9 +11,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
+import com.example.weatherappinventos.database.WeatherDatabase
+import com.example.weatherappinventos.database.WeatherEntity
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_second.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,38 +42,9 @@ class SecondActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
-
-        val returnDataIntent = Intent(
-            this,
-            MainActivity::class.java
-        )
-
-        val returnNameString = cityNameSecond.text
-        val returnTempString = cityTempSecond.text
-        returnDataIntent.putExtra(
-            MainActivity.RETURNED_PLACE_NAME,
-            returnNameString
-        )
-        returnDataIntent.putExtra(
-            MainActivity.RETURNED_PLACE_TEMP,
-            returnTempString
-        )
-        startActivity(returnDataIntent)
-    }
-
-    // локальная проверка интернет-соединеия
-    private fun checkNetwork(): Boolean {
-        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        return activeNetwork != null && activeNetwork.isConnected
-    }
-
-    private fun checkTransmissionErrors() {
-        if (checkNetwork()) {
-            noDataInfo(false)
-        } else {
-            noDataInfo(true)
-        }
+        val dbDao = WeatherDatabase.getInstance(this).currentDao()
+        dbDao.deleteAll()
+        dbDao.insert(WeatherEntity(cityNameSecond.text.toString(), cityTempSecond.text.toString()))
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -102,7 +73,21 @@ class SecondActivity : AppCompatActivity() {
         counter++
     }
 
-    // обновление активити по свайпу
+    // локальная проверка интернет-соединеия
+    private fun checkNetwork(): Boolean {
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
+    }
+
+    private fun checkTransmissionErrors() {
+        if (checkNetwork()) {
+            noDataInfo(false)
+        } else {
+            noDataInfo(true)
+        }
+    }
+
     private fun swipeRefreshSecond() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
@@ -175,7 +160,6 @@ class SecondActivity : AppCompatActivity() {
         viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
     }
 
-    // инцилизация и установка иконок погодных условий
     fun setIcons(main: ForecastDataWeather) {
         reduceIcons(mainDescrImage, main.list[0].weather[0].icon)
         reduceIcons(firstDescrImage, main.list[7].weather[0].icon)
