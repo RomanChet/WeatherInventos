@@ -42,6 +42,13 @@ class MainActivity : AppCompatActivity() {
 
         loadData()
         swipeRefresh()
+        listenerEditName()
+
+        if (checkNetwork()) {
+            iterateItems()
+        } else {
+            noDataInfo(true)
+        }
 
         val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
             override fun onItemClicked(item: MainItem) {
@@ -83,8 +90,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onRestart() {
+        super.onRestart()
 
         counter = 0
 
@@ -100,14 +107,6 @@ class MainActivity : AppCompatActivity() {
         if (index != -1) {
             items[index] = MainItem(returnedName, returnedTemp)
             refreshAdapter()
-        }
-
-        listenerEditName()
-
-        if (checkNetwork()) {
-            iterateItems()
-        } else {
-            noDataInfo(true)
         }
     }
 
@@ -189,7 +188,6 @@ class MainActivity : AppCompatActivity() {
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
-            listenerEditName()
             iterateItems()
             refreshAdapter()
         }
