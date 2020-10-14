@@ -53,13 +53,13 @@ class MainActivity : AppCompatActivity() {
         val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
             override fun onItemClicked(item: MainItem) {
                 val goSecondActivityIntent = Intent(
-                    this@MainActivity,
-                    SecondActivity::class.java
+                        this@MainActivity,
+                        SecondActivity::class.java
                 )
                 val counterString = item.name
                 goSecondActivityIntent.putExtra(
-                    SecondActivity.PLACE_NAME,
-                    counterString
+                        SecondActivity.PLACE_NAME,
+                        counterString
                 )
                 startActivity(goSecondActivityIntent)
             }
@@ -122,17 +122,17 @@ class MainActivity : AppCompatActivity() {
             }, 1000)
             if (value) {
                 val toast = Toast.makeText(
-                    baseContext,
-                    "Ошибка интернет-соединения!",
-                    Toast.LENGTH_SHORT
+                        baseContext,
+                        "Ошибка интернет-соединения!",
+                        Toast.LENGTH_SHORT
                 )
                 toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             } else {
                 val toast = Toast.makeText(
-                    baseContext,
-                    "Ошибка загрузки! Попробуйте обновить страницу!",
-                    Toast.LENGTH_SHORT
+                        baseContext,
+                        "Ошибка загрузки! Попробуйте обновить страницу!",
+                        Toast.LENGTH_SHORT
                 )
                 toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
@@ -195,14 +195,14 @@ class MainActivity : AppCompatActivity() {
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
 
         go_refreshMain.setColorSchemeResources(
-            android.R.color.holo_orange_light,
-            android.R.color.holo_red_light
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
         )
     }
 
     private fun listenerEditName() {
         cityNameText.addTextChangedListener(object :
-            TextWatcher {
+                TextWatcher {
             override fun afterTextChanged(edit: Editable?) {
                 val city = edit.toString()
                 getWeatherFromName(city)
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(
-                call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
+                    call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
             ) {
                 val weather: CurrentDataWeather? = response.body()
                 val main = weather?.main
@@ -264,8 +264,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(
-                call: Call<CurrentDataWeather>,
-                response: Response<CurrentDataWeather>
+                    call: Call<CurrentDataWeather>,
+                    response: Response<CurrentDataWeather>
             ) {
                 val weather: CurrentDataWeather? = response.body()
                 val main = weather?.main
@@ -282,9 +282,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupDataTemp(main: CurrentDataWeather) {
 
         val index =
-            items.indexOfFirst {
-                it.name == main.name
-            }
+                items.indexOfFirst {
+                    it.name == main.name
+                }
         if (index != -1) {
             items[index] = MainItem(main.name, "${main.main.temp} °C")
         }
@@ -298,8 +298,8 @@ class MainActivity : AppCompatActivity() {
             val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
             val counterString = city_name.text // преобразование объекта в строку
             goTestActivityIntent.putExtra(
-                SecondActivity.PLACE_NAME,
-                counterString
+                    SecondActivity.PLACE_NAME,
+                    counterString
             )
             startActivity(goTestActivityIntent)
         }

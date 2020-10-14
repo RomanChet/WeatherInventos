@@ -11,10 +11,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 class WeatherApiClient(context: Context) {
     private val apiKey = context.resources.getString(R.string.api_key) // Api ключ
     private val api = Retrofit.Builder()
-        .baseUrl("https://api.openweathermap.org/data/2.5/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(WeatherApi::class.java)
+            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(WeatherApi::class.java)
 
     fun currentWeather(cityName: String): Call<CurrentDataWeather> {
         return api.currentWeatherCall(cityName, "metric", "ru", apiKey)

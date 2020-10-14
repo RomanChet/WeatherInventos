@@ -9,10 +9,10 @@ import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.R
 
 class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) :
-    RecyclerView.Adapter<MainAdapter.MainHolder>() {
+        RecyclerView.Adapter<MainAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        MainHolder(LayoutInflater.from(parent.context).inflate(R.layout.city_item, parent, false))
+            MainHolder(LayoutInflater.from(parent.context).inflate(R.layout.city_item, parent, false))
 
     override fun getItemCount() = items.size
 

@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class WeatherEntity(
-    @PrimaryKey
-    var name: String,
-    var temp: String
+        @PrimaryKey
+        var name: String,
+        var temp: String
 )
 
