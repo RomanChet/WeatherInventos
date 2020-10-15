@@ -25,7 +25,7 @@ import java.util.*
 class SecondActivity : AppCompatActivity() {
 
     private lateinit var apiClient: WeatherApiClient
-    private var counter = 0
+    private var counter = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,29 +48,29 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun noDataInfo(value: Boolean) {
-        if (counter < 1) {
+        if (counter) {
             Handler().postDelayed({
                 progressBarSecond.visibility = View.INVISIBLE
             }, 1000)
             if (value) {
                 val toast = Toast.makeText(
-                        baseContext,
-                        "Ошибка интернет-соединения!",
-                        Toast.LENGTH_SHORT
+                    baseContext,
+                    "Ошибка интернет-соединения! Попробуйте обновить страницу!",
+                    Toast.LENGTH_SHORT
                 )
                 toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             } else {
                 val toast = Toast.makeText(
-                        baseContext,
-                        "Ошибка загрузки! Попробуйте обновить страницу!",
-                        Toast.LENGTH_SHORT
+                    baseContext,
+                    "Ошибка загрузки! Попробуйте обновить страницу!",
+                    Toast.LENGTH_SHORT
                 )
                 toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             }
         }
-        counter++
+        counter = false
     }
 
     // локальная проверка интернет-соединеия
@@ -91,7 +91,7 @@ class SecondActivity : AppCompatActivity() {
     private fun swipeRefreshSecond() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
-            counter = 0
+            counter = true
             processCurrentApi()
             processForecastApi()
             swipeRefresh.isRefreshing = false
@@ -100,23 +100,23 @@ class SecondActivity : AppCompatActivity() {
         swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
 
         go_refresh.setColorSchemeResources(
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
         )
     }
 
     private fun processCurrentApi() {
         val count: String? = intent.getStringExtra(PLACE_NAME)
         count?.let { apiClient.currentWeather(it) }?.enqueue(object :
-                Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+            Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
                 checkTransmissionErrors()
             }
 
             override fun onResponse(
-                    call: Call<CurrentDataWeather>?,
-                    response: Response<CurrentDataWeather>?
+                call: Call<CurrentDataWeather>?,
+                response: Response<CurrentDataWeather>?
             ) {
                 if (response != null) {
                     val weather: CurrentDataWeather? = response.body()
@@ -132,15 +132,15 @@ class SecondActivity : AppCompatActivity() {
     private fun processForecastApi() {
         val countSecond: String? = intent.getStringExtra(PLACE_NAME)
         countSecond?.let { apiClient.weatherForecast(it) }?.enqueue(object :
-                Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+            Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
                 t?.printStackTrace()
                 checkTransmissionErrors()
             }
 
             override fun onResponse(
-                    call: Call<ForecastDataWeather>?,
-                    response: Response<ForecastDataWeather>?
+                call: Call<ForecastDataWeather>?,
+                response: Response<ForecastDataWeather>?
             ) {
                 if (response != null) {
                     val weatherSec: ForecastDataWeather? = response.body()
