@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
-import com.example.weatherappinventos.database.WeatherDatabase
+import com.example.weatherappinventos.database.*
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.recyclerview.MainAdapter
@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
+        WeatherDatabase.startDb(this)
+
         loadData()
         swipeRefresh()
         listenerEditName()
@@ -56,11 +58,17 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity,
                     SecondActivity::class.java
                 )
-                val counterString = item.name
+                val counterName = item.name
+                val counterTemp = item.temp
                 goSecondActivityIntent.putExtra(
                     SecondActivity.PLACE_NAME,
-                    counterString
+                    counterName
                 )
+
+                WeatherDatabase.getDbDao(this@MainActivity).deleteAll()
+                WeatherDatabase.getDbDao(this@MainActivity)
+                    .insert(WeatherEntity(counterName, counterTemp))
+
                 startActivity(goSecondActivityIntent)
             }
         })
@@ -96,22 +104,17 @@ class MainActivity : AppCompatActivity() {
         counter = true
         iterateItems()
 
-        val dbDao = WeatherDatabase.getInstance(this).currentDao()
+        val returnedName = WeatherDatabase.getDbAll(this).name
+        val returnedTemp = WeatherDatabase.getDbAll(this).temp
 
-        if (dbDao.getAll().isNotEmpty()) {
-            val dbGetFirst = dbDao.getAll()[0]
-
-            val returnedName = dbGetFirst.name
-            val returnedTemp = dbGetFirst.temp
-
-            val index = items.indexOfFirst {
-                it.name == returnedName
-            }
-            if (index != -1) {
-                items[index] = MainItem(returnedName, returnedTemp)
-                refreshAdapter()
-            }
+        val index = items.indexOfFirst {
+            it.name == returnedName
         }
+        if (index != -1) {
+            items[index] = MainItem(returnedName, returnedTemp)
+            refreshAdapter()
+        }
+
     }
 
     override fun onPause() {

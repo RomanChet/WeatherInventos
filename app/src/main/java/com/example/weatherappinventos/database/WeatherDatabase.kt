@@ -8,13 +8,14 @@ import androidx.room.RoomDatabase
 
 @Database(entities = [WeatherEntity::class], version = 1)
 abstract class WeatherDatabase : RoomDatabase() {
+
     abstract fun currentDao(): WeatherDao
 
     companion object {
 
         private var instance: WeatherDatabase? = null
 
-        fun getInstance(context: Context): WeatherDatabase {
+        private fun getInstance(context: Context): WeatherDatabase {
             if (instance == null) {
                 instance = Room
                     .databaseBuilder(
@@ -26,6 +27,21 @@ abstract class WeatherDatabase : RoomDatabase() {
                     .build()
             }
             return instance as WeatherDatabase
+        }
+
+        fun startDb(context: Context) {
+            val db = getInstance(context).currentDao()
+            db.deleteAll()
+            db.insert(WeatherEntity("name", "temp"))
+        }
+
+        fun getDbAll(context: Context): WeatherEntity {
+            val db = getInstance(context).currentDao()
+            return db.getAll()[0]
+        }
+
+        fun getDbDao(context: Context): WeatherDao {
+            return getInstance(context).currentDao()
         }
     }
 

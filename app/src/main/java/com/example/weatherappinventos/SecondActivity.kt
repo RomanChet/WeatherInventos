@@ -11,8 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
-import com.example.weatherappinventos.database.WeatherDatabase
-import com.example.weatherappinventos.database.WeatherEntity
+import com.example.weatherappinventos.database.*
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
@@ -35,16 +34,30 @@ class SecondActivity : AppCompatActivity() {
 
         processCurrentApi()
         processForecastApi()
-
         swipeRefreshSecond()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
 
-        val dbDao = WeatherDatabase.getInstance(this).currentDao()
-        dbDao.deleteAll()
-        dbDao.insert(WeatherEntity(cityNameSecond.text.toString(), cityTempSecond.text.toString()))
+        WeatherDatabase.getDbDao(this).deleteAll()
+        WeatherDatabase.getDbDao(this).insert(
+            WeatherEntity(
+                cityNameSecond.text.toString(),
+                cityTempSecond.text.toString()
+            )
+        )
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val returnedName = WeatherDatabase.getDbAll(this).name
+        val returnedTemp = WeatherDatabase.getDbAll(this).temp
+
+        cityNameSecond.text = returnedName
+        cityTempSecond.text = returnedTemp
+
     }
 
     private fun noDataInfo(value: Boolean) {
