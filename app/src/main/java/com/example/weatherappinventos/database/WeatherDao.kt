@@ -19,5 +19,4 @@ interface WeatherDao {
 
     @Delete
     fun delete(currententity: WeatherEntity)
-
 }
