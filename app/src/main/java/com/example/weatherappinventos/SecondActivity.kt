@@ -25,6 +25,7 @@ class SecondActivity : AppCompatActivity() {
 
     private lateinit var apiClient: WeatherApiClient
     private var counter = true
+    private val db = WeatherDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,20 +41,15 @@ class SecondActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
-        WeatherDatabase.getDbDao(this).deleteAll()
-        WeatherDatabase.getDbDao(this).insert(
-            WeatherEntity(
-                cityNameSecond.text.toString(),
-                cityTempSecond.text.toString()
-            )
-        )
+        db.action(this, "deleteAll")
+        db.action(this, "insert", cityNameSecond.text.toString(), cityTempSecond.text.toString())
     }
 
     override fun onStart() {
         super.onStart()
 
-        val returnedName = WeatherDatabase.getDbAll(this).name
-        val returnedTemp = WeatherDatabase.getDbAll(this).temp
+        val returnedName = db.getAll(this).name
+        val returnedTemp = db.getAll(this).temp
 
         cityNameSecond.text = returnedName
         cityTempSecond.text = returnedTemp

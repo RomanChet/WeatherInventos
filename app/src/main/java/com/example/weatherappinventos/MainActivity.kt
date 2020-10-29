@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var apiClient: WeatherApiClient
     private var counter = true
+    private val db = WeatherDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        WeatherDatabase.startDb(this)
+        db.action(this, "start")
 
         loadData()
         swipeRefresh()
@@ -65,9 +66,8 @@ class MainActivity : AppCompatActivity() {
                     counterName
                 )
 
-                WeatherDatabase.getDbDao(this@MainActivity).deleteAll()
-                WeatherDatabase.getDbDao(this@MainActivity)
-                    .insert(WeatherEntity(counterName, counterTemp))
+                db.action(this@MainActivity, "deleteAll")
+                db.action(this@MainActivity, "insert", counterName, counterTemp)
 
                 startActivity(goSecondActivityIntent)
             }
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 items
             } else {
                 items.add(MainItem(city_name.text.toString(), currentTemp.text.toString()))
-                cityNameText.text = null // обнуление строки ввода для удобства
+                cityNameText.text = null // очистка строки ввода для удобства
                 city_name.text = ""
                 currentTemp.text = ""
                 descr.text = ""
@@ -104,8 +104,8 @@ class MainActivity : AppCompatActivity() {
         counter = true
         iterateItems()
 
-        val returnedName = WeatherDatabase.getDbAll(this).name
-        val returnedTemp = WeatherDatabase.getDbAll(this).temp
+        val returnedName = db.getAll(this).name
+        val returnedTemp = db.getAll(this).temp
 
         val index = items.indexOfFirst {
             it.name == returnedName
