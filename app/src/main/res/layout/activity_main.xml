@@ -72,7 +72,7 @@
             android:id="@+id/descr"
             android:layout_width="237dp"
             android:layout_height="65dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="65dp"
             android:fontFamily="sans-serif-light"
             android:gravity="center"
