@@ -41,8 +41,7 @@ class SecondActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
 
-        db.action(this, "deleteAll")
-        db.action(this, "insert", cityNameSecond.text.toString(), cityTempSecond.text.toString())
+        db.insertFun(this, cityNameSecond.text.toString(), cityTempSecond.text.toString())
     }
 
     override fun onStart() {
@@ -115,7 +114,7 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun processCurrentApi() {
-        val count: String? = intent.getStringExtra(PLACE_NAME)
+        val count: String? = db.getAll(this).name
         count?.let { apiClient.currentWeather(it) }?.enqueue(object :
             Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
@@ -139,7 +138,7 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun processForecastApi() {
-        val countSecond: String? = intent.getStringExtra(PLACE_NAME)
+        val countSecond: String? = db.getAll(this).name
         countSecond?.let { apiClient.weatherForecast(it) }?.enqueue(object :
             Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
             override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
@@ -299,9 +298,5 @@ class SecondActivity : AppCompatActivity() {
         descrText3.text = main.list[23].weather[0].description
         descrText4.text = main.list[31].weather[0].description
         descrText5.text = main.list[39].weather[0].description
-    }
-
-    companion object {
-        const val PLACE_NAME = "place_name"
     }
 }

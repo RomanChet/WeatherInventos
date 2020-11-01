@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        db.action(this, "start")
+        db.start(this)
 
         loadData()
         swipeRefresh()
@@ -56,18 +56,12 @@ class MainActivity : AppCompatActivity() {
         val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
             override fun onItemClicked(item: MainItem) {
                 val goSecondActivityIntent = Intent(
-                    this@MainActivity,
-                    SecondActivity::class.java
+                    this@MainActivity, SecondActivity::class.java
                 )
                 val counterName = item.name
                 val counterTemp = item.temp
-                goSecondActivityIntent.putExtra(
-                    SecondActivity.PLACE_NAME,
-                    counterName
-                )
 
-                db.action(this@MainActivity, "deleteAll")
-                db.action(this@MainActivity, "insert", counterName, counterTemp)
+                db.insertFun(this@MainActivity, counterName, counterTemp)
 
                 startActivity(goSecondActivityIntent)
             }
@@ -286,7 +280,6 @@ class MainActivity : AppCompatActivity() {
 
     // функция прописывающая отображение данных из датаклассов во вью
     private fun setupDataTemp(main: CurrentDataWeather) {
-
         val index =
             items.indexOfFirst {
                 it.name == main.name
@@ -302,11 +295,9 @@ class MainActivity : AppCompatActivity() {
             items
         } else {
             val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
-            val counterString = city_name.text // преобразование объекта в строку
-            goTestActivityIntent.putExtra(
-                SecondActivity.PLACE_NAME,
-                counterString
-            )
+
+            db.insertFun(this, city_name.text.toString(), currentTemp.text.toString())
+
             startActivity(goTestActivityIntent)
         }
     }

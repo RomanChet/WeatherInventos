@@ -29,14 +29,22 @@ abstract class WeatherDatabase : RoomDatabase() {
             return instance as WeatherDatabase
         }
 
-        private fun startDb(context: Context) {
+        private fun getDao(context: Context): WeatherDao {
+            return getInstance(context).currentDao()
+        }
+
+        private fun insert(context: Context, counterName: String = "", counterTemp: String = "") {
+            getDao(context).insert(WeatherEntity(counterName, counterTemp))
+        }
+
+        private fun deleteAll(context: Context) {
+            getDao(context).deleteAll()
+        }
+
+        fun start(context: Context) {
             val db = getInstance(context).currentDao()
             db.deleteAll()
             db.insert(WeatherEntity("name", "temp"))
-        }
-
-        private fun getDao(context: Context): WeatherDao {
-            return getInstance(context).currentDao()
         }
 
         fun getAll(context: Context): WeatherEntity {
@@ -44,17 +52,9 @@ abstract class WeatherDatabase : RoomDatabase() {
             return db.getAll()[0]
         }
 
-        fun action(
-            context: Context,
-            action: String,
-            counterName: String = "",
-            counterTemp: String = ""
-        ) {
-            when (action) {
-                "start" -> startDb(context)
-                "insert" -> getDao(context).insert(WeatherEntity(counterName, counterTemp))
-                "deleteAll" -> getDao(context).deleteAll()
-            }
+        fun insertFun(context: Context, cityName: String, cityTemp: String) {
+            deleteAll(context)
+            insert(context, cityName, cityTemp)
         }
     }
 
