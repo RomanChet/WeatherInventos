@@ -26,6 +26,7 @@ class SecondActivity : AppCompatActivity() {
     private lateinit var apiClient: WeatherApiClient
     private var counter = true
     private val db = WeatherDatabase
+    private val cityName = db.getAll(this).name
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,12 @@ class SecondActivity : AppCompatActivity() {
 
         cityNameSecond.text = returnedName
         cityTempSecond.text = returnedTemp
+    }
 
+    override fun onPause() {
+        super.onPause()
+        processCurrentApi(false)
+        processForecastApi(false)
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -66,7 +72,6 @@ class SecondActivity : AppCompatActivity() {
                     "Ошибка интернет-соединения! Попробуйте обновить страницу!",
                     Toast.LENGTH_SHORT
                 )
-                toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             } else {
                 val toast = Toast.makeText(
@@ -74,7 +79,6 @@ class SecondActivity : AppCompatActivity() {
                     "Ошибка загрузки! Попробуйте обновить страницу!",
                     Toast.LENGTH_SHORT
                 )
-                toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             }
         }
@@ -113,55 +117,63 @@ class SecondActivity : AppCompatActivity() {
         )
     }
 
-    private fun processCurrentApi() {
-        val count: String? = db.getAll(this).name
-        count?.let { apiClient.currentWeather(it) }?.enqueue(object :
-            Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
-            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
+    private fun processCurrentApi(value: Boolean = true) {
+        val call = apiClient.currentWeather(cityName)
+        if (!value) {
+            call.cancel()
+        } else {
+            call.enqueue(object :
+                Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+                override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
+                    t?.printStackTrace()
+                    checkTransmissionErrors()
+                }
 
-            override fun onResponse(
-                call: Call<CurrentDataWeather>?,
-                response: Response<CurrentDataWeather>?
-            ) {
-                if (response != null) {
-                    val weather: CurrentDataWeather? = response.body()
-                    weather?.main
-                    weather?.let {
-                        presentData(it)
+                override fun onResponse(
+                    call: Call<CurrentDataWeather>?,
+                    response: Response<CurrentDataWeather>?
+                ) {
+                    if (response != null) {
+                        val weather: CurrentDataWeather? = response.body()
+                        weather?.main
+                        weather?.let {
+                            presentData(it)
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
-    private fun processForecastApi() {
-        val countSecond: String? = db.getAll(this).name
-        countSecond?.let { apiClient.weatherForecast(it) }?.enqueue(object :
-            Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
-            override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
+    private fun processForecastApi(value: Boolean = true) {
+        val call = apiClient.weatherForecast(cityName)
+        if (!value) {
+            call.cancel()
+        } else {
+            call.enqueue(object :
+                Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+                override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
+                    t?.printStackTrace()
+                    checkTransmissionErrors()
+                }
 
-            override fun onResponse(
-                call: Call<ForecastDataWeather>?,
-                response: Response<ForecastDataWeather>?
-            ) {
-                if (response != null) {
-                    val weatherSec: ForecastDataWeather? = response.body()
-                    weatherSec?.list?.get(0)?.main
-                    weatherSec?.let {
-                        showWeekDays(it)
-                        setIcons(it)
-                        showForecastData(it)
-                        progressBarSecond.visibility = View.INVISIBLE
+                override fun onResponse(
+                    call: Call<ForecastDataWeather>?,
+                    response: Response<ForecastDataWeather>?
+                ) {
+                    if (response != null) {
+                        val weatherSec: ForecastDataWeather? = response.body()
+                        weatherSec?.list?.get(0)?.main
+                        weatherSec?.let {
+                            showWeekDays(it)
+                            setIcons(it)
+                            showForecastData(it)
+                            progressBarSecond.visibility = View.INVISIBLE
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun reduceIcons(viewIcon: ImageView, nameIcon: String) {

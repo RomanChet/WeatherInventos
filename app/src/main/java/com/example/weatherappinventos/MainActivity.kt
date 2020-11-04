@@ -39,9 +39,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        apiClient = WeatherApiClient(this)
+        apiClient = WeatherApiClient(applicationContext)
 
-        db.start(this)
+        db.start(applicationContext)
 
         loadData()
         swipeRefresh()
@@ -56,12 +56,12 @@ class MainActivity : AppCompatActivity() {
         val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
             override fun onItemClicked(item: MainItem) {
                 val goSecondActivityIntent = Intent(
-                    this@MainActivity, SecondActivity::class.java
+                    applicationContext, SecondActivity::class.java
                 )
                 val counterName = item.name
                 val counterTemp = item.temp
 
-                db.insertFun(this@MainActivity, counterName, counterTemp)
+                db.insertFun(applicationContext, counterName, counterTemp)
 
                 startActivity(goSecondActivityIntent)
             }
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         myRecycler.adapter = myAdapter
 
-        val swipeHandler = object : SwipeToDelete(this) {
+        val swipeHandler = object : SwipeToDelete(applicationContext) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 myAdapter.removeAt(viewHolder.adapterPosition)
             }
@@ -98,8 +98,8 @@ class MainActivity : AppCompatActivity() {
         counter = true
         iterateItems()
 
-        val returnedName = db.getAll(this).name
-        val returnedTemp = db.getAll(this).temp
+        val returnedName = db.getAll(applicationContext).name
+        val returnedTemp = db.getAll(applicationContext).temp
 
         val index = items.indexOfFirst {
             it.name == returnedName
@@ -108,12 +108,13 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName, returnedTemp)
             refreshAdapter()
         }
-
     }
 
     override fun onPause() {
         super.onPause()
         saveData()
+        getWeatherFromName(value = false)
+        getWeatherListTemp(value = false)
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -127,7 +128,6 @@ class MainActivity : AppCompatActivity() {
                     "Ошибка интернет-соединения! Попробуйте обновить страницу!",
                     Toast.LENGTH_SHORT
                 )
-                toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             } else {
                 val toast = Toast.makeText(
@@ -135,7 +135,6 @@ class MainActivity : AppCompatActivity() {
                     "Ошибка загрузки! Попробуйте обновить страницу!",
                     Toast.LENGTH_SHORT
                 )
-                toast.setGravity(Gravity.CENTER, 0, 0)
                 toast.show()
             }
         }
@@ -217,24 +216,28 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun getWeatherFromName(city: String) {
+    fun getWeatherFromName(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
-        call.enqueue(object : Callback<CurrentDataWeather> {
-            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
-
-            override fun onResponse(
-                call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
-            ) {
-                val weather: CurrentDataWeather? = response.body()
-                val main = weather?.main
-                weather?.let {
-                    presentData(it)
+        if (!value) {
+            call.cancel()
+        } else {
+            call.enqueue(object : Callback<CurrentDataWeather> {
+                override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
+                    t?.printStackTrace()
+                    checkTransmissionErrors()
                 }
-            }
-        })
+
+                override fun onResponse(
+                    call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
+                ) {
+                    val weather: CurrentDataWeather? = response.body()
+                    val main = weather?.main
+                    weather?.let {
+                        presentData(it)
+                    }
+                }
+            })
+        }
     }
 
     private fun presentData(main: CurrentDataWeather) {
@@ -251,31 +254,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun iterateItems() {
-        items.forEach { getWeatherListTemp(it.name) }
+    private fun iterateItems(value: Boolean = true) {
+        if (value) {
+            items.forEach { getWeatherListTemp(it.name) }
+        } else {
+            items.forEach { getWeatherListTemp(it.name, false) }
+        }
     }
 
     // выполнение и обработка запроса к API
-    private fun getWeatherListTemp(city: String) {
+    private fun getWeatherListTemp(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
-        call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
-            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
-
-            override fun onResponse(
-                call: Call<CurrentDataWeather>,
-                response: Response<CurrentDataWeather>
-            ) {
-                val weather: CurrentDataWeather? = response.body()
-                val main = weather?.main
-                weather?.let {
-                    progressBarMain.visibility = View.INVISIBLE
-                    setupDataTemp(it)
+        if (!value) {
+            call.cancel()
+        } else {
+            call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
+                override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
+                    t?.printStackTrace()
+                    checkTransmissionErrors()
                 }
-            }
-        })
+
+                override fun onResponse(
+                    call: Call<CurrentDataWeather>,
+                    response: Response<CurrentDataWeather>
+                ) {
+                    val weather: CurrentDataWeather? = response.body()
+                    val main = weather?.main
+                    weather?.let {
+                        progressBarMain.visibility = View.INVISIBLE
+                        setupDataTemp(it)
+                    }
+                }
+            })
+        }
     }
 
     // функция прописывающая отображение данных из датаклассов во вью
