@@ -15,6 +15,7 @@ import com.example.weatherappinventos.database.*
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
+import okhttp3.Dispatcher
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +28,8 @@ class SecondActivity : AppCompatActivity() {
     private var counter = true
     private val db = WeatherDatabase
     private val cityName = db.getAll(this).name
+
+    private val dispatcher = Dispatcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,7 +123,7 @@ class SecondActivity : AppCompatActivity() {
     private fun processCurrentApi(value: Boolean = true) {
         val call = apiClient.currentWeather(cityName)
         if (!value) {
-            call.cancel()
+            dispatcher.cancelAll()
         } else {
             call.enqueue(object :
                 Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
@@ -148,7 +151,7 @@ class SecondActivity : AppCompatActivity() {
     private fun processForecastApi(value: Boolean = true) {
         val call = apiClient.weatherForecast(cityName)
         if (!value) {
-            call.cancel()
+            dispatcher.cancelAll()
         } else {
             call.enqueue(object :
                 Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода

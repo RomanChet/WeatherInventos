@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,16 +14,18 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
-import com.example.weatherappinventos.database.*
+import com.example.weatherappinventos.database.WeatherDatabase
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.MainItem
 import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.Dispatcher
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -34,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apiClient: WeatherApiClient
     private var counter = true
     private val db = WeatherDatabase
+
+    private val dispatcher = Dispatcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,7 +222,7 @@ class MainActivity : AppCompatActivity() {
     fun getWeatherFromName(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
         if (!value) {
-            call.cancel()
+            dispatcher.cancelAll()
         } else {
             call.enqueue(object : Callback<CurrentDataWeather> {
                 override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
@@ -266,7 +269,7 @@ class MainActivity : AppCompatActivity() {
     private fun getWeatherListTemp(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
         if (!value) {
-            call.cancel()
+            dispatcher.cancelAll()
         } else {
             call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
                 override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
