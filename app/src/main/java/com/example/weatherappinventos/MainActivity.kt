@@ -272,37 +272,30 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun iterateItems(value: Boolean = true) {
-        if (value) {
-            items.forEach { getWeatherListTemp(it.name) }
-        } else {
-            items.forEach { getWeatherListTemp(it.name, false) }
-        }
+        items.forEach { getWeatherListTemp(it.name) }
     }
 
     // выполнение и обработка запроса к API
     private fun getWeatherListTemp(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
-        //
-        mainCoroutine.launch {
-            call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
-                override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
-                    t?.printStackTrace()
-                    checkTransmissionErrors()
-                }
+        call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
+            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
+                t?.printStackTrace()
+                checkTransmissionErrors()
+            }
 
-                override fun onResponse(
-                    call: Call<CurrentDataWeather>,
-                    response: Response<CurrentDataWeather>
-                ) {
-                    val weather: CurrentDataWeather? = response.body()
-                    val main = weather?.main
-                    weather?.let {
-                        progressBarMain.visibility = View.INVISIBLE
-                        setupDataTemp(it)
-                    }
+            override fun onResponse(
+                call: Call<CurrentDataWeather>,
+                response: Response<CurrentDataWeather>
+            ) {
+                val weather: CurrentDataWeather? = response.body()
+                val main = weather?.main
+                weather?.let {
+                    progressBarMain.visibility = View.INVISIBLE
+                    setupDataTemp(it)
                 }
-            })
-        }
+            }
+        })
     }
 
 
