@@ -41,8 +41,11 @@ class SecondActivity : AppCompatActivity() {
 
         apiClient = WeatherApiClient(this)
 
-        processCurrentApi()
-        processForecastApi()
+        mainCoroutine.launch {
+            processCurrentApi()
+            processForecastApi()
+        }
+
         swipeRefreshSecond()
     }
 
@@ -60,6 +63,11 @@ class SecondActivity : AppCompatActivity() {
 
         cityNameSecond.text = returnedName
         cityTempSecond.text = returnedTemp
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 
     override fun onPause() {
@@ -127,57 +135,53 @@ class SecondActivity : AppCompatActivity() {
 
     private fun processCurrentApi(value: Boolean = true) {
         val call = apiClient.currentWeather(cityName)
-        mainCoroutine.launch {
-            call.enqueue(object :
-                Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
-                override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
-                    t?.printStackTrace()
-                    checkTransmissionErrors()
-                }
+        call.enqueue(object :
+            Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
+                t?.printStackTrace()
+                checkTransmissionErrors()
+            }
 
-                override fun onResponse(
-                    call: Call<CurrentDataWeather>?,
-                    response: Response<CurrentDataWeather>?
-                ) {
-                    if (response != null) {
-                        val weather: CurrentDataWeather? = response.body()
-                        weather?.main
-                        weather?.let {
-                            presentData(it)
-                        }
+            override fun onResponse(
+                call: Call<CurrentDataWeather>?,
+                response: Response<CurrentDataWeather>?
+            ) {
+                if (response != null) {
+                    val weather: CurrentDataWeather? = response.body()
+                    weather?.main
+                    weather?.let {
+                        presentData(it)
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     private fun processForecastApi(value: Boolean = true) {
         val call = apiClient.weatherForecast(cityName)
-        mainCoroutine.launch {
-            call.enqueue(object :
-                Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
-                override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
-                    t?.printStackTrace()
-                    checkTransmissionErrors()
-                }
+        call.enqueue(object :
+            Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
+            override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
+                t?.printStackTrace()
+                checkTransmissionErrors()
+            }
 
-                override fun onResponse(
-                    call: Call<ForecastDataWeather>?,
-                    response: Response<ForecastDataWeather>?
-                ) {
-                    if (response != null) {
-                        val weatherSec: ForecastDataWeather? = response.body()
-                        weatherSec?.list?.get(0)?.main
-                        weatherSec?.let {
-                            showWeekDays(it)
-                            setIcons(it)
-                            showForecastData(it)
-                            progressBarSecond.visibility = View.INVISIBLE
-                        }
+            override fun onResponse(
+                call: Call<ForecastDataWeather>?,
+                response: Response<ForecastDataWeather>?
+            ) {
+                if (response != null) {
+                    val weatherSec: ForecastDataWeather? = response.body()
+                    weatherSec?.list?.get(0)?.main
+                    weatherSec?.let {
+                        showWeekDays(it)
+                        setIcons(it)
+                        showForecastData(it)
+                        progressBarSecond.visibility = View.INVISIBLE
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     private fun reduceIcons(viewIcon: ImageView, nameIcon: String) {

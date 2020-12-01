@@ -54,10 +54,13 @@ class MainActivity : AppCompatActivity() {
 
         loadData()
         swipeRefresh()
-        listenerEditName()
+        mainCoroutine.launch { listenerEditName() }
 
         if (checkNetwork()) {
-            iterateItems()
+            // запускаем дочернюю корутину от parentCoroutine методом launch, который не возвращает результат (async возвращает при вызове await())
+            //  uiScope.launch { ... } это и есть Job, который автоматически при создании входит в состав mainCoroutine
+            // при использовании supervisorJob, Jobы, которые на одном уровне не уничтожаются все при ошибке в одном из них
+            mainCoroutine.launch { iterateItems() }
         } else {
             noDataInfo(true)
         }
@@ -105,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         counter = true
-        iterateItems()
+
 
         val returnedName = db.getAll(applicationContext).name
         val returnedTemp = db.getAll(applicationContext).temp
@@ -117,12 +120,17 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName, returnedTemp)
             refreshAdapter()
         }
+
+        mainCoroutine.launch {
+            listenerEditName()
+            iterateItems()
+        }
     }
 
     override fun onPause() {
         super.onPause()
         saveData()
-        mainCoroutine.cancel() // отменение всех дочерних корутин, из под mainCoroutine
+        mainCoroutine.cancel() // отменение всех дочерних корутин, из под mainCoroutine //
         // getWeatherFromName(value = false)
         // getWeatherListTemp(value = false)
     }
@@ -198,7 +206,7 @@ class MainActivity : AppCompatActivity() {
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
-            iterateItems()
+            mainCoroutine.launch { iterateItems() }
             refreshAdapter()
         }
 
@@ -228,24 +236,23 @@ class MainActivity : AppCompatActivity() {
 
     fun getWeatherFromName(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
-        mainCoroutine.launch {
-            call.enqueue(object : Callback<CurrentDataWeather> {
-                override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
-                    t?.printStackTrace()
-                    checkTransmissionErrors()
-                }
+        call.enqueue(object : Callback<CurrentDataWeather> {
+            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
+                t?.printStackTrace()
+                checkTransmissionErrors()
+            }
 
-                override fun onResponse(
-                    call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
-                ) {
-                    val weather: CurrentDataWeather? = response.body()
-                    val main = weather?.main
-                    weather?.let {
-                        presentData(it)
-                    }
+            override fun onResponse(
+                call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
+            ) {
+                val weather: CurrentDataWeather? = response.body()
+                val main = weather?.main
+                weather?.let {
+                    presentData(it)
                 }
-            })
-        }
+            }
+        })
+
 
     }
 
@@ -265,15 +272,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun iterateItems(value: Boolean = true) {
-        // запускаем дочернюю корутину parentCoroutine методом launch, который не возвращает результат (async возвращает при вызове await())
-        //  uiScope.launch { ... } это и есть Job, который автоматически при создании входит в состав mainCoroutine
-        // при использовании supervisorJob, Jobы, которые на одном уровне не уничтожаются все при ошибке в одном из них
-        mainCoroutine.launch {
-            if (value) {
-                items.forEach { getWeatherListTemp(it.name) }
-            } else {
-                items.forEach { getWeatherListTemp(it.name, false) }
-            }
+        if (value) {
+            items.forEach { getWeatherListTemp(it.name) }
+        } else {
+            items.forEach { getWeatherListTemp(it.name, false) }
         }
     }
 
