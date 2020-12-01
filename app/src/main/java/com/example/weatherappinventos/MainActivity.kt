@@ -21,10 +21,13 @@ import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import okhttp3.Dispatcher
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Runnable
 
 
 @Suppress("DEPRECATION")
@@ -36,7 +39,10 @@ class MainActivity : AppCompatActivity() {
     private var counter = true
     private val db = WeatherDatabase
 
-    private val dispatcher = Dispatcher()
+    private val mainCoroutine = CoroutineScope(Dispatchers.IO)
+    // это билдер корутин, который как бы стоит сверху групп корутин, при помощи него можно отменить все дочерние корутины
+    // он анализирует свои дочерние подкорутины
+    // IO потому что диспетчер оптимизирован для выполнения дискового или сетевого ввода-вывода вне основного потока
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,8 +122,9 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         saveData()
-        getWeatherFromName(value = false)
-        getWeatherListTemp(value = false)
+        mainCoroutine.cancel() // отменение всех дочерних корутин, из под mainCoroutine
+        // getWeatherFromName(value = false)
+        // getWeatherListTemp(value = false)
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -221,9 +228,7 @@ class MainActivity : AppCompatActivity() {
 
     fun getWeatherFromName(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
-        if (!value) {
-            dispatcher.cancelAll()
-        } else {
+        mainCoroutine.launch {
             call.enqueue(object : Callback<CurrentDataWeather> {
                 override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                     t?.printStackTrace()
@@ -241,6 +246,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+
     }
 
     private fun presentData(main: CurrentDataWeather) {
@@ -257,20 +263,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun iterateItems(value: Boolean = true) {
-        if (value) {
-            items.forEach { getWeatherListTemp(it.name) }
-        } else {
-            items.forEach { getWeatherListTemp(it.name, false) }
+        // запускаем дочернюю корутину parentCoroutine методом launch, который не возвращает результат (async возвращает при вызове await())
+        //  uiScope.launch { ... } это и есть Job, который автоматически при создании входит в состав mainCoroutine
+        // при использовании supervisorJob, Jobы, которые на одном уровне не уничтожаются все при ошибке в одном из них
+        mainCoroutine.launch {
+            if (value) {
+                items.forEach { getWeatherListTemp(it.name) }
+            } else {
+                items.forEach { getWeatherListTemp(it.name, false) }
+            }
         }
     }
 
     // выполнение и обработка запроса к API
     private fun getWeatherListTemp(city: String = "", value: Boolean = true) {
         val call = apiClient.currentWeather(city)
-        if (!value) {
-            dispatcher.cancelAll()
-        } else {
+        //
+        mainCoroutine.launch {
             call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
                 override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
                     t?.printStackTrace()
@@ -291,6 +302,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
     }
+
 
     // функция прописывающая отображение данных из датаклассов во вью
     private fun setupDataTemp(main: CurrentDataWeather) {

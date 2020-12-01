@@ -15,6 +15,10 @@ import com.example.weatherappinventos.database.*
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import okhttp3.Dispatcher
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,7 +33,7 @@ class SecondActivity : AppCompatActivity() {
     private val db = WeatherDatabase
     private val cityName = db.getAll(this).name
 
-    private val dispatcher = Dispatcher()
+    private val mainCoroutine = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +64,9 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        processCurrentApi(false)
-        processForecastApi(false)
+        mainCoroutine.cancel()
+        //processCurrentApi(false)
+        //processForecastApi(false)
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -122,9 +127,7 @@ class SecondActivity : AppCompatActivity() {
 
     private fun processCurrentApi(value: Boolean = true) {
         val call = apiClient.currentWeather(cityName)
-        if (!value) {
-            dispatcher.cancelAll()
-        } else {
+        mainCoroutine.launch {
             call.enqueue(object :
                 Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
                 override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
@@ -150,9 +153,7 @@ class SecondActivity : AppCompatActivity() {
 
     private fun processForecastApi(value: Boolean = true) {
         val call = apiClient.weatherForecast(cityName)
-        if (!value) {
-            dispatcher.cancelAll()
-        } else {
+        mainCoroutine.launch {
             call.enqueue(object :
                 Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
                 override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
