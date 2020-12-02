@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.whenCreated
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.database.*
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
@@ -35,16 +36,20 @@ class SecondActivity : AppCompatActivity() {
 
     private val mainCoroutine = CoroutineScope(Dispatchers.IO)
 
+    init {
+        mainCoroutine.launch {
+            whenCreated {
+                processCurrentApi()
+                processForecastApi()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
         apiClient = WeatherApiClient(this)
-
-        mainCoroutine.launch {
-            processCurrentApi()
-            processForecastApi()
-        }
 
         swipeRefreshSecond()
     }
@@ -65,16 +70,9 @@ class SecondActivity : AppCompatActivity() {
         cityTempSecond.text = returnedTemp
     }
 
-    override fun onResume() {
-        super.onResume()
-
-    }
-
     override fun onPause() {
         super.onPause()
         mainCoroutine.cancel()
-        //processCurrentApi(false)
-        //processForecastApi(false)
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -133,7 +131,7 @@ class SecondActivity : AppCompatActivity() {
         )
     }
 
-    private fun processCurrentApi(value: Boolean = true) {
+    private fun processCurrentApi() {
         val call = apiClient.currentWeather(cityName)
         call.enqueue(object :
             Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
@@ -157,7 +155,7 @@ class SecondActivity : AppCompatActivity() {
         })
     }
 
-    private fun processForecastApi(value: Boolean = true) {
+    private fun processForecastApi() {
         val call = apiClient.weatherForecast(cityName)
         call.enqueue(object :
             Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода

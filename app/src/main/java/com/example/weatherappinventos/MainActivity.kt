@@ -10,6 +10,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.whenCreated
+import androidx.lifecycle.whenResumed
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -39,10 +43,22 @@ class MainActivity : AppCompatActivity() {
     private var counter = true
     private val db = WeatherDatabase
 
-    private val mainCoroutine = CoroutineScope(Dispatchers.IO)
-    // это билдер корутин, который как бы стоит сверху групп корутин, при помощи него можно отменить все дочерние корутины
-    // он анализирует свои дочерние подкорутины
-    // IO потому что диспетчер оптимизирован для выполнения дискового или сетевого ввода-вывода вне основного потока
+    private val mainCoroutine = CoroutineScope(IO)
+
+    init {
+        mainCoroutine.launch {
+            whenCreated {
+                if (checkNetwork()) {
+                    iterateItems()
+                } else {
+                    noDataInfo(true)
+                }
+            }
+            whenResumed {
+                iterateItems()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,16 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         loadData()
         swipeRefresh()
-        mainCoroutine.launch { listenerEditName() }
-
-        if (checkNetwork()) {
-            // запускаем дочернюю корутину от parentCoroutine методом launch, который не возвращает результат (async возвращает при вызове await())
-            //  uiScope.launch { ... } это и есть Job, который автоматически при создании входит в состав mainCoroutine
-            // при использовании supervisorJob, Jobы, которые на одном уровне не уничтожаются все при ошибке в одном из них
-            mainCoroutine.launch { iterateItems() }
-        } else {
-            noDataInfo(true)
-        }
+        listenerEditName()
 
         val myAdapter = MainAdapter(items, object : MainAdapter.Callback {
             override fun onItemClicked(item: MainItem) {
@@ -109,7 +116,6 @@ class MainActivity : AppCompatActivity() {
 
         counter = true
 
-
         val returnedName = db.getAll(applicationContext).name
         val returnedTemp = db.getAll(applicationContext).temp
 
@@ -120,19 +126,13 @@ class MainActivity : AppCompatActivity() {
             items[index] = MainItem(returnedName, returnedTemp)
             refreshAdapter()
         }
-
-        mainCoroutine.launch {
-            listenerEditName()
-            iterateItems()
-        }
     }
+
 
     override fun onPause() {
         super.onPause()
         saveData()
-        mainCoroutine.cancel() // отменение всех дочерних корутин, из под mainCoroutine //
-        // getWeatherFromName(value = false)
-        // getWeatherListTemp(value = false)
+        mainCoroutine.cancel()
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -164,6 +164,7 @@ class MainActivity : AppCompatActivity() {
         val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnected
+
     }
 
     private fun checkTransmissionErrors() {
@@ -234,7 +235,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun getWeatherFromName(city: String = "", value: Boolean = true) {
+    fun getWeatherFromName(city: String = "") {
         val call = apiClient.currentWeather(city)
         call.enqueue(object : Callback<CurrentDataWeather> {
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
@@ -271,12 +272,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun iterateItems(value: Boolean = true) {
+    private fun iterateItems() {
         items.forEach { getWeatherListTemp(it.name) }
     }
 
     // выполнение и обработка запроса к API
-    private fun getWeatherListTemp(city: String = "", value: Boolean = true) {
+    private fun getWeatherListTemp(city: String = "") {
         val call = apiClient.currentWeather(city)
         call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
             override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
