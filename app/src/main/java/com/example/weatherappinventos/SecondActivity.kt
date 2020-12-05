@@ -16,14 +16,13 @@ import com.example.weatherappinventos.database.*
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.Dispatcher
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Runnable
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -34,7 +33,9 @@ class SecondActivity : AppCompatActivity() {
     private val db = WeatherDatabase
     private val cityName = db.getAll(this).name
 
-    private val mainCoroutine = CoroutineScope(Dispatchers.IO)
+    private val dispatcher = OkHttpClient().dispatcher()
+    private val coroutineJob = Job()
+    private val mainCoroutine = CoroutineScope(Dispatchers.IO + coroutineJob)
 
     init {
         mainCoroutine.launch {
@@ -72,7 +73,7 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        mainCoroutine.cancel()
+        dispatcher.cancelAll()
     }
 
     private fun noDataInfo(value: Boolean) {

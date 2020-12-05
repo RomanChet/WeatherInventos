@@ -28,9 +28,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import okhttp3.Dispatcher
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
 import java.lang.Runnable
 
 
@@ -43,9 +45,12 @@ class MainActivity : AppCompatActivity() {
     private var counter = true
     private val db = WeatherDatabase
 
-    private val mainCoroutine = CoroutineScope(IO)
+    private val dispatcher = OkHttpClient().dispatcher()
+    private val coroutineJob = Job()
+    private val mainCoroutine = CoroutineScope(IO + coroutineJob)
 
     init {
+
         mainCoroutine.launch {
             whenCreated {
                 if (checkNetwork()) {
@@ -132,7 +137,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         saveData()
-        mainCoroutine.cancel()
+        dispatcher.cancelAll()
     }
 
     private fun noDataInfo(value: Boolean) {
