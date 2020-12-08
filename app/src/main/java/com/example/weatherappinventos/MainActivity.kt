@@ -10,10 +10,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.whenCreated
-import androidx.lifecycle.whenResumed
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -45,25 +42,23 @@ class MainActivity : AppCompatActivity() {
     private var counter = true
     private val db = WeatherDatabase
 
-    private val dispatcher = OkHttpClient().dispatcher()
     private val coroutineJob = Job()
     private val mainCoroutine = CoroutineScope(IO + coroutineJob)
 
     init {
 
-        mainCoroutine.launch {
-            whenCreated {
-                if (checkNetwork()) {
-                    iterateItems()
-                } else {
-                    noDataInfo(true)
-                }
-            }
-            whenResumed {
+        lifecycleScope.launchWhenCreated {
+            if (checkNetwork()) {
                 iterateItems()
+            } else {
+                noDataInfo(true)
             }
         }
+        lifecycleScope.launchWhenResumed {
+            iterateItems()
+        }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,7 +132,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         saveData()
-        dispatcher.cancelAll()
     }
 
     private fun noDataInfo(value: Boolean) {

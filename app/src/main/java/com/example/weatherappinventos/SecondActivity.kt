@@ -4,25 +4,20 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
-import android.view.Gravity
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.lifecycle.whenCreated
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
-import com.example.weatherappinventos.database.*
+import com.example.weatherappinventos.database.WeatherDatabase
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
-import kotlinx.coroutines.*
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Runnable
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -33,18 +28,16 @@ class SecondActivity : AppCompatActivity() {
     private val db = WeatherDatabase
     private val cityName = db.getAll(this).name
 
-    private val dispatcher = OkHttpClient().dispatcher()
-    private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Dispatchers.IO + coroutineJob)
+    //private val coroutineJob = Job()
+    //private val mainCoroutine = CoroutineScope(Dispatchers.IO + coroutineJob)
 
     init {
-        mainCoroutine.launch {
-            whenCreated {
-                processCurrentApi()
-                processForecastApi()
-            }
+        lifecycleScope.launchWhenCreated {
+            processCurrentApi()
+            processForecastApi()
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +66,6 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        dispatcher.cancelAll()
     }
 
     private fun noDataInfo(value: Boolean) {
