@@ -10,7 +10,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.whenCreated
+import androidx.lifecycle.whenResumed
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,12 +25,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
 import java.lang.Runnable
 
 
@@ -46,19 +41,19 @@ class MainActivity : AppCompatActivity() {
     private val mainCoroutine = CoroutineScope(IO + coroutineJob)
 
     init {
-
-        lifecycleScope.launchWhenCreated {
-            if (checkNetwork()) {
+        mainCoroutine.launch {
+            whenCreated {
+                if (checkNetwork()) {
+                    iterateItems()
+                } else {
+                    noDataInfo(true)
+                }
+            }
+            whenResumed {
                 iterateItems()
-            } else {
-                noDataInfo(true)
             }
         }
-        lifecycleScope.launchWhenResumed {
-            iterateItems()
-        }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,6 +127,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         saveData()
+        mainCoroutine.cancel()
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -206,7 +202,7 @@ class MainActivity : AppCompatActivity() {
             currentTemp.text = ""
             descr.text = ""
             swipeRefresh.isRefreshing = false
-            mainCoroutine.launch { iterateItems() }
+            mainCoroutine.launch { whenCreated { iterateItems() } }
             refreshAdapter()
         }
 
@@ -223,7 +219,7 @@ class MainActivity : AppCompatActivity() {
             TextWatcher {
             override fun afterTextChanged(edit: Editable?) {
                 val city = edit.toString()
-                getWeatherFromName(city)
+                mainCoroutine.launch { getWeatherFromName(city) }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -234,26 +230,19 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun getWeatherFromName(city: String = "") {
-        val call = apiClient.currentWeather(city)
-        call.enqueue(object : Callback<CurrentDataWeather> {
-            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
-
-            override fun onResponse(
-                call: Call<CurrentDataWeather>, response: Response<CurrentDataWeather>
-            ) {
+    suspend fun getWeatherFromName(city: String = "") {
+        try {
+            val response = apiClient.currentWeather(city)
+            if (response.isSuccessful) {
                 val weather: CurrentDataWeather? = response.body()
                 val main = weather?.main
                 weather?.let {
                     presentData(it)
                 }
             }
-        })
-
-
+        } catch (e: Exception) {
+            checkTransmissionErrors()
+        }
     }
 
     private fun presentData(main: CurrentDataWeather) {
@@ -271,23 +260,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun iterateItems() {
+    private suspend fun iterateItems() {
         items.forEach { getWeatherListTemp(it.name) }
     }
 
     // выполнение и обработка запроса к API
-    private fun getWeatherListTemp(city: String = "") {
-        val call = apiClient.currentWeather(city)
-        call.enqueue(object : Callback<CurrentDataWeather> { // асинхронный запрос
-            override fun onFailure(call: Call<CurrentDataWeather>, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
-
-            override fun onResponse(
-                call: Call<CurrentDataWeather>,
-                response: Response<CurrentDataWeather>
-            ) {
+    private suspend fun getWeatherListTemp(city: String = "") {
+        try {
+            val response = apiClient.currentWeather(city)
+            if (response.isSuccessful) {
                 val weather: CurrentDataWeather? = response.body()
                 val main = weather?.main
                 weather?.let {
@@ -295,7 +276,9 @@ class MainActivity : AppCompatActivity() {
                     setupDataTemp(it)
                 }
             }
-        })
+        } catch (e: Exception) {
+            checkTransmissionErrors()
+        }
     }
 
 

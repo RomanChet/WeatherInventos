@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.weatherappinventos.R
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -16,11 +16,11 @@ class WeatherApiClient(context: Context) {
         .build()
         .create(WeatherApi::class.java)
 
-    fun currentWeather(cityName: String): Call<CurrentDataWeather> {
+    suspend fun currentWeather(cityName: String): Response<CurrentDataWeather> {
         return api.currentWeatherCall(cityName, "metric", "ru", apiKey)
     }
 
-    fun weatherForecast(cityName: String): Call<ForecastDataWeather> {
+    suspend fun weatherForecast(cityName: String): Response<ForecastDataWeather> {
         return api.forecastWeatherCall(cityName, "metric", "ru", apiKey)
     }
 }

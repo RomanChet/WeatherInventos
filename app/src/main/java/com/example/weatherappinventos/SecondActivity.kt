@@ -8,16 +8,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenCreated
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.database.WeatherDatabase
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -28,16 +27,17 @@ class SecondActivity : AppCompatActivity() {
     private val db = WeatherDatabase
     private val cityName = db.getAll(this).name
 
-    //private val coroutineJob = Job()
-    //private val mainCoroutine = CoroutineScope(Dispatchers.IO + coroutineJob)
+    private val coroutineJob = Job()
+    private val mainCoroutine = CoroutineScope(Dispatchers.IO + coroutineJob)
 
     init {
-        lifecycleScope.launchWhenCreated {
-            processCurrentApi()
-            processForecastApi()
+        mainCoroutine.launch {
+            whenCreated {
+                processCurrentApi()
+                processForecastApi()
+            }
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +66,7 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        mainCoroutine.cancel()
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -111,8 +112,13 @@ class SecondActivity : AppCompatActivity() {
         val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
         val runnable = Runnable {
             counter = true
-            processCurrentApi()
-            processForecastApi()
+            mainCoroutine.launch {
+                whenCreated {
+                    processCurrentApi()
+                    processForecastApi()
+                }
+
+            }
             swipeRefresh.isRefreshing = false
         }
 
@@ -124,56 +130,40 @@ class SecondActivity : AppCompatActivity() {
         )
     }
 
-    private fun processCurrentApi() {
-        val call = apiClient.currentWeather(cityName)
-        call.enqueue(object :
-            Callback<CurrentDataWeather> { // асинхронный запрос, на основе описанного ранее метода
-            override fun onFailure(call: Call<CurrentDataWeather>?, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
-
-            override fun onResponse(
-                call: Call<CurrentDataWeather>?,
-                response: Response<CurrentDataWeather>?
-            ) {
-                if (response != null) {
-                    val weather: CurrentDataWeather? = response.body()
-                    weather?.main
-                    weather?.let {
-                        presentData(it)
-                    }
+    private suspend fun processCurrentApi() {
+        try {
+            val response = apiClient.currentWeather(cityName)
+            if (response.isSuccessful) {
+                val weather: CurrentDataWeather? = response.body()
+                weather?.main
+                weather?.let {
+                    presentData(it)
                 }
             }
-        })
+        } catch (e: Exception) {
+            checkTransmissionErrors()
+        }
     }
 
-    private fun processForecastApi() {
-        val call = apiClient.weatherForecast(cityName)
-        call.enqueue(object :
-            Callback<ForecastDataWeather> { // асинхронный запрос, на основе описанного ранее метода
-            override fun onFailure(call: Call<ForecastDataWeather>?, t: Throwable?) {
-                t?.printStackTrace()
-                checkTransmissionErrors()
-            }
-
-            override fun onResponse(
-                call: Call<ForecastDataWeather>?,
-                response: Response<ForecastDataWeather>?
-            ) {
-                if (response != null) {
-                    val weatherSec: ForecastDataWeather? = response.body()
-                    weatherSec?.list?.get(0)?.main
-                    weatherSec?.let {
-                        showWeekDays(it)
-                        setIcons(it)
-                        showForecastData(it)
-                        progressBarSecond.visibility = View.INVISIBLE
-                    }
+    private suspend fun processForecastApi() {
+        try {
+            val response = apiClient.weatherForecast(cityName)
+            if (response.isSuccessful) {
+                val weatherSec: ForecastDataWeather? = response.body()
+                weatherSec?.list?.get(0)?.main
+                weatherSec?.let {
+                    showWeekDays(it)
+                    setIcons(it)
+                    showForecastData(it)
+                    progressBarSecond.visibility = View.INVISIBLE
                 }
             }
-        })
+        } catch (e: Exception) {
+            checkTransmissionErrors()
+        }
+
     }
+
 
     private fun reduceIcons(viewIcon: ImageView, nameIcon: String) {
         viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
