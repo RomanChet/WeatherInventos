@@ -16,7 +16,7 @@ interface WeatherApi {
         @Query("lang") lang: String, // язык вывода результатов
         @Query("APPID") apiKey: String
     )
-            : Response<CurrentDataWeather>
+            : CurrentDataWeather
 
     // https://api.openweathermap.org/data/2.5/forecast?q=%D0%BC%D0%BE%D1%81&units=metric&lang=ru&cnt=5&appid=cef1ebe434addacc0ea0911feea6b570
     @GET("/data/2.5/forecast")
@@ -26,5 +26,5 @@ interface WeatherApi {
         @Query("lang") lang: String, // язык вывода результатов
         @Query("APPID") apiKey: String
     )
-            : Response<ForecastDataWeather>
+            : ForecastDataWeather
 }

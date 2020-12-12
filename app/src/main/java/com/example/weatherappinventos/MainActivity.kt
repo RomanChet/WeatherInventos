@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.os.IResultReceiver
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -23,8 +24,11 @@ import com.example.weatherappinventos.recyclerview.MainAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.city_item.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import okhttp3.Dispatcher
 import java.lang.Runnable
 
 
@@ -38,19 +42,21 @@ class MainActivity : AppCompatActivity() {
     private val db = WeatherDatabase
 
     private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(IO + coroutineJob)
+    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
 
     init {
         mainCoroutine.launch {
-            whenCreated {
-                if (checkNetwork()) {
-                    iterateItems()
-                } else {
-                    noDataInfo(true)
+            withContext(IO) {
+                whenCreated {
+                    if (checkNetwork()) {
+                        iterateItems()
+                    } else {
+                        noDataInfo(true)
+                    }
                 }
-            }
-            whenResumed {
-                iterateItems()
+                whenResumed {
+                    iterateItems()
+                }
             }
         }
     }
@@ -219,7 +225,7 @@ class MainActivity : AppCompatActivity() {
             TextWatcher {
             override fun afterTextChanged(edit: Editable?) {
                 val city = edit.toString()
-                mainCoroutine.launch { getWeatherFromName(city) }
+                mainCoroutine.launch { withContext(Dispatchers.Main) { getWeatherFromName(city) } }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -233,15 +239,11 @@ class MainActivity : AppCompatActivity() {
     suspend fun getWeatherFromName(city: String = "") {
         try {
             val response = apiClient.currentWeather(city)
-            if (response.isSuccessful) {
-                val weather: CurrentDataWeather? = response.body()
-                val main = weather?.main
-                weather?.let {
-                    presentData(it)
-                }
-            }
+            val weather: CurrentDataWeather = response
+            weather.main
+            presentData(weather)
         } catch (e: Exception) {
-            checkTransmissionErrors()
+            city_name.text = city
         }
     }
 
@@ -268,13 +270,11 @@ class MainActivity : AppCompatActivity() {
     private suspend fun getWeatherListTemp(city: String = "") {
         try {
             val response = apiClient.currentWeather(city)
-            if (response.isSuccessful) {
-                val weather: CurrentDataWeather? = response.body()
-                val main = weather?.main
-                weather?.let {
-                    progressBarMain.visibility = View.INVISIBLE
-                    setupDataTemp(it)
-                }
+            val weather: CurrentDataWeather = response
+            weather.main
+            weather.let {
+                progressBarMain.visibility = View.INVISIBLE
+                setupDataTemp(it)
             }
         } catch (e: Exception) {
             checkTransmissionErrors()

@@ -16,11 +16,11 @@ class WeatherApiClient(context: Context) {
         .build()
         .create(WeatherApi::class.java)
 
-    suspend fun currentWeather(cityName: String): Response<CurrentDataWeather> {
+    suspend fun currentWeather(cityName: String): CurrentDataWeather {
         return api.currentWeatherCall(cityName, "metric", "ru", apiKey)
     }
 
-    suspend fun weatherForecast(cityName: String): Response<ForecastDataWeather> {
+    suspend fun weatherForecast(cityName: String): ForecastDataWeather {
         return api.forecastWeatherCall(cityName, "metric", "ru", apiKey)
     }
 }

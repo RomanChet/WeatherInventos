@@ -16,6 +16,8 @@ import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_second.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import java.lang.Runnable
 import java.util.*
 
@@ -28,13 +30,15 @@ class SecondActivity : AppCompatActivity() {
     private val cityName = db.getAll(this).name
 
     private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Dispatchers.IO + coroutineJob)
+    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
 
     init {
         mainCoroutine.launch {
             whenCreated {
-                processCurrentApi()
-                processForecastApi()
+                withContext(IO) {
+                    processCurrentApi()
+                    processForecastApi()
+                }
             }
         }
     }
@@ -133,13 +137,9 @@ class SecondActivity : AppCompatActivity() {
     private suspend fun processCurrentApi() {
         try {
             val response = apiClient.currentWeather(cityName)
-            if (response.isSuccessful) {
-                val weather: CurrentDataWeather? = response.body()
-                weather?.main
-                weather?.let {
-                    presentData(it)
-                }
-            }
+            val weather: CurrentDataWeather = response
+            weather.main
+            presentData(weather)
         } catch (e: Exception) {
             checkTransmissionErrors()
         }
@@ -148,15 +148,13 @@ class SecondActivity : AppCompatActivity() {
     private suspend fun processForecastApi() {
         try {
             val response = apiClient.weatherForecast(cityName)
-            if (response.isSuccessful) {
-                val weatherSec: ForecastDataWeather? = response.body()
-                weatherSec?.list?.get(0)?.main
-                weatherSec?.let {
-                    showWeekDays(it)
-                    setIcons(it)
-                    showForecastData(it)
-                    progressBarSecond.visibility = View.INVISIBLE
-                }
+            val weatherSec: ForecastDataWeather = response
+            weatherSec.list[0].main
+            weatherSec.let {
+                showWeekDays(it)
+                setIcons(it)
+                showForecastData(it)
+                progressBarSecond.visibility = View.INVISIBLE
             }
         } catch (e: Exception) {
             checkTransmissionErrors()
@@ -169,7 +167,7 @@ class SecondActivity : AppCompatActivity() {
         viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
     }
 
-    fun setIcons(main: ForecastDataWeather) {
+    private fun setIcons(main: ForecastDataWeather) {
         reduceIcons(mainDescrImage, main.list[0].weather[0].icon)
         reduceIcons(firstDescrImage, main.list[7].weather[0].icon)
         reduceIcons(secondDescrImage, main.list[15].weather[0].icon)
