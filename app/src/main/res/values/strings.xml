@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">WeatherAppInventos</string>
-    <string name="api_key">cef1ebe434addacc0ea0911feea6b570</string>
     <string name="hint_t_c">t °C</string>
     <string name="hint_city_name">Место</string>
     <string name="hint_description">погодные условия</string>

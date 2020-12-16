@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.os.IResultReceiver
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -13,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.whenCreated
 import androidx.lifecycle.whenResumed
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,9 +26,10 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.city_item.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import okhttp3.Dispatcher
+import retrofit2.HttpException
 import java.lang.Runnable
 
 
@@ -42,21 +43,24 @@ class MainActivity : AppCompatActivity() {
     private val db = WeatherDatabase
 
     private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
+    private val mainCoroutine = CoroutineScope(Default + coroutineJob)
+
+    private var apiKey = WeatherApiClient().apiKey
+    private val apiKeySecond = WeatherApiClient().apiKeySecond
+    private val apiKeyThird = WeatherApiClient().apiKeyThird
 
     init {
-        mainCoroutine.launch {
-            withContext(IO) {
-                whenCreated {
-                    if (checkNetwork()) {
-                        iterateItems()
-                    } else {
-                        noDataInfo(true)
-                    }
-                }
-                whenResumed {
+        mainCoroutine.launch(Default) {
+            whenCreated {
+                if (checkNetwork()) {
                     iterateItems()
+                } else {
+                    noDataInfo(true)
                 }
+            }
+            whenResumed {
+                getWeatherFromName()
+                iterateItems()
             }
         }
     }
@@ -65,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        apiClient = WeatherApiClient(applicationContext)
+        apiClient = WeatherApiClient()
 
         db.start(applicationContext)
 
@@ -128,7 +132,6 @@ class MainActivity : AppCompatActivity() {
             refreshAdapter()
         }
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -225,7 +228,7 @@ class MainActivity : AppCompatActivity() {
             TextWatcher {
             override fun afterTextChanged(edit: Editable?) {
                 val city = edit.toString()
-                mainCoroutine.launch { withContext(Dispatchers.Main) { getWeatherFromName(city) } }
+                mainCoroutine.launch { getWeatherFromName(city) }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -238,10 +241,14 @@ class MainActivity : AppCompatActivity() {
 
     suspend fun getWeatherFromName(city: String = "") {
         try {
-            val response = apiClient.currentWeather(city)
+            val response = apiClient.currentWeather(city, apiKey)
             val weather: CurrentDataWeather = response
-            weather.main
             presentData(weather)
+            city_name.text = weather.name
+
+        } catch (e: HttpException) {
+            toHandleHttpErrors(e.code(), counter)
+
         } catch (e: Exception) {
             city_name.text = city
         }
@@ -261,7 +268,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private suspend fun iterateItems() {
         items.forEach { getWeatherListTemp(it.name) }
     }
@@ -269,18 +275,61 @@ class MainActivity : AppCompatActivity() {
     // выполнение и обработка запроса к API
     private suspend fun getWeatherListTemp(city: String = "") {
         try {
-            val response = apiClient.currentWeather(city)
+            val response = apiClient.currentWeather(city, apiKey)
             val weather: CurrentDataWeather = response
-            weather.main
             weather.let {
                 progressBarMain.visibility = View.INVISIBLE
                 setupDataTemp(it)
             }
+
+        } catch (e: HttpException) {
+            toHandleHttpErrors(e.code(), counter)
+
         } catch (e: Exception) {
             checkTransmissionErrors()
         }
     }
 
+    // обработчик ошибок от сервера (по цифровому коду ошибки)
+    private fun toHandleHttpErrors(code: Int, value: Boolean) {
+        // При израсходовании количества запросов на текущем API (ошибка 429) ключе происходит его смена
+        while (code == 429) {
+            if (apiKey == "cef1ebe434addacc0ea0911feea6b571") {
+                apiKey = apiKeySecond
+                break
+            }
+            if (apiKey == apiKeySecond) {
+                apiKey = apiKeyThird
+                break
+            } else {
+                if (value) {
+                    Handler().postDelayed({
+                        progressBarMain.visibility = View.INVISIBLE
+                    }, 1000)
+                    val toast = Toast.makeText(
+                        baseContext,
+                        "Погода временно не доступна",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
+                }
+                break
+            }
+        }
+        if (code == 401 && value) {
+            Handler().postDelayed({
+                progressBarMain.visibility = View.INVISIBLE
+            }, 1000)
+            val toast = Toast.makeText(
+                baseContext,
+                "Не корректный API ключ",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }
+        if (code == 404 && value) city_name.text = ""
+        counter = false
+    }
 
     // функция прописывающая отображение данных из датаклассов во вью
     private fun setupDataTemp(main: CurrentDataWeather) {

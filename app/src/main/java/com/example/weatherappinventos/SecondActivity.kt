@@ -14,11 +14,14 @@ import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.database.WeatherDatabase
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_second.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import java.lang.Runnable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -30,15 +33,17 @@ class SecondActivity : AppCompatActivity() {
     private val cityName = db.getAll(this).name
 
     private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
+    private val mainCoroutine = CoroutineScope(Default + coroutineJob)
+
+    private var apiKey = WeatherApiClient().apiKey
+    private val apiKeySecond = WeatherApiClient().apiKeySecond
+    private val apiKeyThird = WeatherApiClient().apiKeyThird
 
     init {
-        mainCoroutine.launch {
+        mainCoroutine.launch(Default) {
             whenCreated {
-                withContext(IO) {
-                    processCurrentApi()
-                    processForecastApi()
-                }
+                processCurrentApi()
+                processForecastApi()
             }
         }
     }
@@ -47,7 +52,7 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
-        apiClient = WeatherApiClient(this)
+        apiClient = WeatherApiClient()
 
         swipeRefreshSecond()
     }
@@ -121,7 +126,6 @@ class SecondActivity : AppCompatActivity() {
                     processCurrentApi()
                     processForecastApi()
                 }
-
             }
             swipeRefresh.isRefreshing = false
         }
@@ -136,10 +140,11 @@ class SecondActivity : AppCompatActivity() {
 
     private suspend fun processCurrentApi() {
         try {
-            val response = apiClient.currentWeather(cityName)
+            val response = apiClient.currentWeather(cityName, apiKey)
             val weather: CurrentDataWeather = response
-            weather.main
             presentData(weather)
+        } catch (e: HttpException) {
+            toHandleHttpErrors(e.code())
         } catch (e: Exception) {
             checkTransmissionErrors()
         }
@@ -147,21 +152,53 @@ class SecondActivity : AppCompatActivity() {
 
     private suspend fun processForecastApi() {
         try {
-            val response = apiClient.weatherForecast(cityName)
+            val response = apiClient.weatherForecast(cityName, apiKey)
             val weatherSec: ForecastDataWeather = response
-            weatherSec.list[0].main
             weatherSec.let {
                 showWeekDays(it)
                 setIcons(it)
                 showForecastData(it)
                 progressBarSecond.visibility = View.INVISIBLE
             }
+        } catch (e: HttpException) {
+            toHandleHttpErrors(e.code())
         } catch (e: Exception) {
             checkTransmissionErrors()
         }
-
     }
 
+    private fun toHandleHttpErrors(code: Int) {
+        while (code == 429) {
+            if (apiKey == "cef1ebe434addacc0ea0911feea6b571") {
+                apiKey = apiKeySecond
+                break
+            }
+            if (apiKey == apiKeySecond) {
+                apiKey = apiKeyThird
+                break
+            } else {
+                val toast = Toast.makeText(
+                    baseContext,
+                    "Погода временно не доступна",
+                    Toast.LENGTH_SHORT
+                )
+                toast.show()
+                break
+            }
+        }
+        if (code == 401) {
+            Handler().postDelayed({
+                progressBarMain.visibility = View.INVISIBLE
+            }, 1000)
+            val toast = Toast.makeText(
+                baseContext,
+                "Не корректный API ключ",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }
+        if (code == 404) city_name.text = ""
+    }
 
     private fun reduceIcons(viewIcon: ImageView, nameIcon: String) {
         viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
