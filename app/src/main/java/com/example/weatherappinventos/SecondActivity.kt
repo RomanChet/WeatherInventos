@@ -17,7 +17,7 @@ import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_second.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -33,14 +33,10 @@ class SecondActivity : AppCompatActivity() {
     private val cityName = db.getAll(this).name
 
     private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Default + coroutineJob)
-
-    private var apiKey = WeatherApiClient().apiKey
-    private val apiKeySecond = WeatherApiClient().apiKeySecond
-    private val apiKeyThird = WeatherApiClient().apiKeyThird
+    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
 
     init {
-        mainCoroutine.launch(Default) {
+        mainCoroutine.launch{
             whenCreated {
                 processCurrentApi()
                 processForecastApi()
@@ -140,7 +136,7 @@ class SecondActivity : AppCompatActivity() {
 
     private suspend fun processCurrentApi() {
         try {
-            val response = apiClient.currentWeather(cityName, apiKey)
+            val response = apiClient.currentWeather(cityName)
             val weather: CurrentDataWeather = response
             presentData(weather)
         } catch (e: HttpException) {
@@ -152,7 +148,7 @@ class SecondActivity : AppCompatActivity() {
 
     private suspend fun processForecastApi() {
         try {
-            val response = apiClient.weatherForecast(cityName, apiKey)
+            val response = apiClient.weatherForecast(cityName)
             val weatherSec: ForecastDataWeather = response
             weatherSec.let {
                 showWeekDays(it)
@@ -168,24 +164,6 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun toHandleHttpErrors(code: Int) {
-        while (code == 429) {
-            if (apiKey == "cef1ebe434addacc0ea0911feea6b571") {
-                apiKey = apiKeySecond
-                break
-            }
-            if (apiKey == apiKeySecond) {
-                apiKey = apiKeyThird
-                break
-            } else {
-                val toast = Toast.makeText(
-                    baseContext,
-                    "Погода временно не доступна",
-                    Toast.LENGTH_SHORT
-                )
-                toast.show()
-                break
-            }
-        }
         if (code == 401) {
             Handler().postDelayed({
                 progressBarMain.visibility = View.INVISIBLE

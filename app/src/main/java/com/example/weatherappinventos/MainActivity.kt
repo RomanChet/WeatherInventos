@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.whenCreated
 import androidx.lifecycle.whenResumed
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,8 +25,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.city_item.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import retrofit2.HttpException
 import java.lang.Runnable
@@ -43,14 +40,10 @@ class MainActivity : AppCompatActivity() {
     private val db = WeatherDatabase
 
     private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Default + coroutineJob)
-
-    private var apiKey = WeatherApiClient().apiKey
-    private val apiKeySecond = WeatherApiClient().apiKeySecond
-    private val apiKeyThird = WeatherApiClient().apiKeyThird
+    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
 
     init {
-        mainCoroutine.launch(Default) {
+        mainCoroutine.launch {
             whenCreated {
                 if (checkNetwork()) {
                     iterateItems()
@@ -168,7 +161,6 @@ class MainActivity : AppCompatActivity() {
         val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnected
-
     }
 
     private fun checkTransmissionErrors() {
@@ -241,7 +233,7 @@ class MainActivity : AppCompatActivity() {
 
     suspend fun getWeatherFromName(city: String = "") {
         try {
-            val response = apiClient.currentWeather(city, apiKey)
+            val response = apiClient.currentWeather(city)
             val weather: CurrentDataWeather = response
             presentData(weather)
             city_name.text = weather.name
@@ -272,10 +264,9 @@ class MainActivity : AppCompatActivity() {
         items.forEach { getWeatherListTemp(it.name) }
     }
 
-    // выполнение и обработка запроса к API
     private suspend fun getWeatherListTemp(city: String = "") {
         try {
-            val response = apiClient.currentWeather(city, apiKey)
+            val response = apiClient.currentWeather(city)
             val weather: CurrentDataWeather = response
             weather.let {
                 progressBarMain.visibility = View.INVISIBLE
@@ -290,32 +281,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // обработчик ошибок от сервера (по цифровому коду ошибки)
     private fun toHandleHttpErrors(code: Int, value: Boolean) {
-        // При израсходовании количества запросов на текущем API (ошибка 429) ключе происходит его смена
-        while (code == 429) {
-            if (apiKey == "cef1ebe434addacc0ea0911feea6b571") {
-                apiKey = apiKeySecond
-                break
-            }
-            if (apiKey == apiKeySecond) {
-                apiKey = apiKeyThird
-                break
-            } else {
-                if (value) {
-                    Handler().postDelayed({
-                        progressBarMain.visibility = View.INVISIBLE
-                    }, 1000)
-                    val toast = Toast.makeText(
-                        baseContext,
-                        "Погода временно не доступна",
-                        Toast.LENGTH_SHORT
-                    )
-                    toast.show()
-                }
-                break
-            }
-        }
         if (code == 401 && value) {
             Handler().postDelayed({
                 progressBarMain.visibility = View.INVISIBLE
@@ -331,7 +297,6 @@ class MainActivity : AppCompatActivity() {
         counter = false
     }
 
-    // функция прописывающая отображение данных из датаклассов во вью
     private fun setupDataTemp(main: CurrentDataWeather) {
         val index =
             items.indexOfFirst {
@@ -348,9 +313,7 @@ class MainActivity : AppCompatActivity() {
             items
         } else {
             val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
-
             db.insertFun(this, city_name.text.toString(), currentTemp.text.toString())
-
             startActivity(goTestActivityIntent)
         }
     }
