@@ -17,11 +17,11 @@ class WeatherApiClient {
     private val apiKeys = arrayOf(
         "cef1ebe434addacc0ea0911feea6b570",
         "8eb64f08f572d28625a4f9e180a4e369",
-        "19c2555631ff13e224f58e3fe06f4a86",
-        "c783a94e8bde42f74c5c6c25a31fdd51"
+        "19c2555631ff13e224f58e3fe06f4a86"
     )
 
     private var apiKey = apiKeys[0]
+    private val reserveApiKey = "c783a94e8bde42f74c5c6c25a31fdd51"
 
     private val api = Retrofit.Builder()
         .baseUrl("https://api.openweathermap.org/data/2.5/")
@@ -36,7 +36,7 @@ class WeatherApiClient {
             api.currentWeatherCall(cityName, "metric", "ru", apiKey)
         } catch (e: HttpException) {
             changeApiKey(e.code())
-            api.currentWeatherCall(cityName, "metric", "ru", apiKey)
+            api.currentWeatherCall(cityName, "metric", "ru", reserveApiKey)
         }
     }
 
@@ -47,7 +47,7 @@ class WeatherApiClient {
             api.forecastWeatherCall(cityName, "metric", "ru", apiKey)
         } catch (e: HttpException) {
             changeApiKey(e.code())
-            api.forecastWeatherCall(cityName, "metric", "ru", apiKey)
+            api.forecastWeatherCall(cityName, "metric", "ru", reserveApiKey)
         }
     }
 
