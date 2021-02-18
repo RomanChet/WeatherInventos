@@ -1,15 +1,11 @@
 package com.example.weatherappinventos.apiprocessing
 
-import android.app.Application
-import android.widget.Toast
 import com.example.weatherappinventos.MainActivity
-import com.example.weatherappinventos.SecondActivity
 import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.system.exitProcess
 
 
 class WeatherApiClient {
@@ -57,6 +53,11 @@ class WeatherApiClient {
         if (index + 1 <= sizeApiKeys && code == 429) {
             index++
             apiKey = apiKeys[index]
-        } else index = 0
+        } else {
+            index -= 2
+            MainActivity().toHandleHttpErrors(0, false)
+            //сброс ключа в нулевое состояние и вывод пользователю тоста о том, что превышено количество попыток
+        }
+
     }
 }

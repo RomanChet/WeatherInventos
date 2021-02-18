@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherAppInventos</string>
+    <string name="app_name">Погода точно</string>
     <string name="hint_t_c">t °C</string>
     <string name="hint_city_name">Место</string>
     <string name="hint_description">погодные условия</string>

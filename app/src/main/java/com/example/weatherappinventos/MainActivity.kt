@@ -281,7 +281,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun toHandleHttpErrors(code: Int, value: Boolean) {
+    fun toHandleHttpErrors(code: Int, value: Boolean) {
         if (code == 401 && value) {
             Handler().postDelayed({
                 progressBarMain.visibility = View.INVISIBLE
@@ -295,6 +295,10 @@ class MainActivity : AppCompatActivity() {
         }
         if (code == 404 && value) city_name.text = ""
         counter = false
+        if (code == 0) {
+            Toast.makeText(this, "Слишком много попыток! Попробуйте позже!", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     private fun setupDataTemp(main: CurrentDataWeather) {
