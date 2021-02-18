@@ -9,12 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_margin="4dp"
-        app:cardCornerRadius="10dp"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        app:cardBackgroundColor="#F7FFF9"
+        app:cardCornerRadius="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#FFFFFF">
 
             <TextView
                 android:id="@+id/cityName"

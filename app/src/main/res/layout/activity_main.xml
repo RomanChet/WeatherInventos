@@ -10,14 +10,14 @@
         android:id="@+id/descrText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#D0FFF1D8"
+        android:background="#D7E4D9"
         tools:context="com.example.weatherappinventos.MainActivity">
 
         <View
             android:id="@+id/backgroundUp"
             android:layout_width="0dp"
             android:layout_height="130dp"
-            android:background="@drawable/bg4"
+            android:background="@drawable/bg_up_main"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -90,6 +90,7 @@
             android:id="@+id/backgroundDown"
             android:layout_width="0dp"
             android:layout_height="86dp"
+            android:background="@color/colorBackgroundMain"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -131,7 +132,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/ic_add_white_24dp"
-            app:backgroundTint="#8E5A5A"
+            app:backgroundTint="#62916A"
             app:layout_constraintBottom_toBottomOf="@+id/backgroundDown"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cityNameText"

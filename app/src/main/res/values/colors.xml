@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="colorMain">#03DAC5</color>
+    <color name="colorBackgroundMain">#E2EFE4</color>
+    <color name="colorBackgroundStrip">#ECFAEE</color>
+    <color name="colorDelStrip">#A0C39C</color>
 </resources>
