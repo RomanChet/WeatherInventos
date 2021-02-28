@@ -81,8 +81,8 @@ class MainActivity : AppCompatActivity() {
                 val counterTemp = item.temp
 
                 db.insertFun(applicationContext, counterName, counterTemp)
-
                 startActivity(goSecondActivityIntent)
+
             }
         })
 
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         saveData()
-        mainCoroutine.cancel()
+        //mainCoroutine.cancel()
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -325,6 +325,7 @@ class MainActivity : AppCompatActivity() {
             val goTestActivityIntent = Intent(this@MainActivity, SecondActivity::class.java)
             db.insertFun(this, city_name.text.toString(), currentTemp.text.toString())
             startActivity(goTestActivityIntent)
+
         }
     }
 }
