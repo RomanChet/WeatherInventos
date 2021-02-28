@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.whenCreated
 import androidx.lifecycle.whenResumed
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                     noDataInfo(true)
                 }
             }
+
             whenResumed {
                 getWeatherFromName()
                 iterateItems()
@@ -261,6 +263,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun iterateItems() {
+        Handler().postDelayed({
+            progressBarMain.visibility = View.INVISIBLE
+        }, 3000)
+
         items.forEach { getWeatherListTemp(it.name) }
     }
 

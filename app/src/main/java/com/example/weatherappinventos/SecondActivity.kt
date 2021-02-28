@@ -1,6 +1,7 @@
 package com.example.weatherappinventos
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
@@ -57,6 +58,9 @@ class SecondActivity : AppCompatActivity() {
         super.onBackPressed()
 
         db.insertFun(this, cityNameSecond.text.toString(), cityTempSecond.text.toString())
+
+        val goTestActivityIntent = Intent(this, MainActivity::class.java)
+        startActivity(goTestActivityIntent)
     }
 
     override fun onStart() {
