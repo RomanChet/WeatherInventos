@@ -251,6 +251,7 @@ class SecondActivity : AppCompatActivity() {
             else -> ""
         }
         with(main) {
+
             cityNameSecond.text = main.name
             cityTempSecond.text = "${main.main.temp} °C"
             cityDescrSecond.text = main.weather[0].description

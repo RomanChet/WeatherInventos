@@ -236,8 +236,9 @@ class MainActivity : AppCompatActivity() {
     suspend fun getWeatherFromName(city: String = "") {
         try {
             val response = apiClient.currentWeather(city)
+
             val weather: CurrentDataWeather = response
-            presentData(weather)
+            presentData(response)
             city_name.text = weather.name
 
         } catch (e: HttpException) {
