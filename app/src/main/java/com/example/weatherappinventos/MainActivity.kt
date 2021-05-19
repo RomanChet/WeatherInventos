@@ -1,5 +1,6 @@
 package com.example.weatherappinventos
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -40,8 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var counter = true
     private val db = WeatherDatabase
 
-    private val coroutineJob = Job()
-    private val mainCoroutine = CoroutineScope(Main + coroutineJob)
+    private val mainCoroutine = CoroutineScope(Main + Job())
 
     init {
         mainCoroutine.launch {
@@ -257,7 +257,7 @@ class MainActivity : AppCompatActivity() {
                 descr.text = ""
             } else {
                 city_name.text = main.name
-                currentTemp.text = "${main.main.temp} °C"
+                currentTemp.text = "${String.format("%.1f", main.main.temp)} °C"
                 descr.text = main.weather[0].description
             }
         }
@@ -314,7 +314,7 @@ class MainActivity : AppCompatActivity() {
                 it.name == main.name
             }
         if (index != -1) {
-            items[index] = MainItem(main.name, "${main.main.temp} °C")
+            items[index] = MainItem(main.name, "${String.format("%.1f", main.main.temp)} °C")
         }
         refreshAdapter()
     }

@@ -1,5 +1,6 @@
 package com.example.weatherappinventos
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -37,7 +38,7 @@ class SecondActivity : AppCompatActivity() {
     private val mainCoroutine = CoroutineScope(Main + coroutineJob)
 
     init {
-        mainCoroutine.launch{
+        mainCoroutine.launch {
             whenCreated {
                 processCurrentApi()
                 processForecastApi()
@@ -219,6 +220,12 @@ class SecondActivity : AppCompatActivity() {
 
     // перевод и установка представляемых данных текущей температуры
     private fun presentData(main: CurrentDataWeather) {
+        min_maxTemp.text = "За сутки: min  ${
+            String.format(
+                "%.1f",
+                main.main.temp_min
+            )
+        } °C    max  ${String.format("%.1f", main.main.temp_max)} °C"
         val constPrDt = weekDayValue(main.dt)
         var st = constPrDt[0]
         var mounthName = constPrDt[1]
@@ -253,7 +260,7 @@ class SecondActivity : AppCompatActivity() {
         with(main) {
 
             cityNameSecond.text = main.name
-            cityTempSecond.text = "${main.main.temp} °C"
+            cityTempSecond.text = "${String.format("%.1f", main.main.temp)} °C"
             cityDescrSecond.text = main.weather[0].description
             weekDate.text = "${st},                  ${numberDay} ${mounthName}"
         }
@@ -295,18 +302,18 @@ class SecondActivity : AppCompatActivity() {
     // представление данных, прогнозируеммой погоды
     fun showForecastData(main: ForecastDataWeather) {
         // прогноз температуры на 5 дней (1 колонка)
-        dayOneTemp.text = "${main.list[7].main.temp} °C"
-        dayTwoTemp.text = "${main.list[15].main.temp} °C"
-        dayThreeTemp.text = "${main.list[23].main.temp} °C"
-        dayFourTemp.text = "${main.list[31].main.temp} °C"
-        dayFiveTemp.text = "${main.list[39].main.temp} °C"
+        dayOneTemp.text = "${String.format("%.1f", main.list[7].main.temp)} °C"
+        dayTwoTemp.text = "${String.format("%.1f", main.list[15].main.temp)} °C"
+        dayThreeTemp.text = "${String.format("%.1f", main.list[23].main.temp)} °C"
+        dayFourTemp.text = "${String.format("%.1f", main.list[31].main.temp)} °C"
+        dayFiveTemp.text = "${String.format("%.1f", main.list[39].main.temp)} °C"
 
         // прогноз ощущаемой температуры на 5 дней (2 колонка)
-        dayOneLikeTemp.text = "${main.list[7].main.feels_like} °C"
-        dayTwoLikeTemp.text = "${main.list[15].main.feels_like} °C"
-        dayThreeLikeTemp.text = "${main.list[23].main.feels_like} °C"
-        dayFourLikeTemp.text = "${main.list[31].main.feels_like} °C"
-        dayFiveLikeTemp.text = "${main.list[39].main.feels_like} °C"
+        dayOneLikeTemp.text = "${String.format("%.1f", main.list[7].main.feels_like)} °C"
+        dayTwoLikeTemp.text = "${String.format("%.1f", main.list[15].main.feels_like)} °C"
+        dayThreeLikeTemp.text = "${String.format("%.1f", main.list[23].main.feels_like)} °C"
+        dayFourLikeTemp.text = "${String.format("%.1f", main.list[31].main.feels_like)} °C"
+        dayFiveLikeTemp.text = "${String.format("%.1f", main.list[39].main.feels_like)} °C"
 
         // погодные условния (прогноз)
         descrText1.text = main.list[7].weather[0].description
