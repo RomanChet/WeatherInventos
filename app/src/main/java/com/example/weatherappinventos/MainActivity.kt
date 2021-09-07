@@ -1,6 +1,5 @@
 package com.example.weatherappinventos
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -13,7 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.whenCreated
 import androidx.lifecycle.whenResumed
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -65,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         apiClient = WeatherApiClient()
+
 
         db.start(applicationContext)
 
@@ -237,9 +236,8 @@ class MainActivity : AppCompatActivity() {
         try {
             val response = apiClient.currentWeather(city)
 
-            val weather: CurrentDataWeather = response
             presentData(response)
-            city_name.text = weather.name
+            city_name.text = response.location.name
 
         } catch (e: HttpException) {
             toHandleHttpErrors(e.code(), counter)
@@ -256,9 +254,9 @@ class MainActivity : AppCompatActivity() {
                 currentTemp.text = ""
                 descr.text = ""
             } else {
-                city_name.text = main.name
-                currentTemp.text = "${String.format("%.1f", main.main.temp)} °C"
-                descr.text = main.weather[0].description
+                city_name.text = main.location.name
+                currentTemp.text = "${main.current.temp_c} °C"
+                descr.text = main.current.condition.text
             }
         }
     }
@@ -311,10 +309,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupDataTemp(main: CurrentDataWeather) {
         val index =
             items.indexOfFirst {
-                it.name == main.name
+                it.name == main.location.name
             }
         if (index != -1) {
-            items[index] = MainItem(main.name, "${String.format("%.1f", main.main.temp)} °C")
+            items[index] =
+                MainItem(main.location.name, "${String.format("%.1f", main.current.temp_c)} °C")
         }
         refreshAdapter()
     }

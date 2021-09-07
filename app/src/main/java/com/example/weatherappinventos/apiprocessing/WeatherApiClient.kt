@@ -11,24 +11,31 @@ import retrofit2.converter.gson.GsonConverterFactory
 class WeatherApiClient {
 
     private val apiKeys = arrayOf(
-        "cef1ebe434addacc0ea0911feea6b570",
-        "8eb64f08f572d28625a4f9e180a4e369",
-        "19c2555631ff13e224f58e3fe06f4a86"
+        "b5f6f391da774ad7a4a195525212406", //ucoe22
+        "caf63b13e1a9457a95c205158212706", //chet444
+        "43539c2cd74b489282a205518212706", //ucoe
     )
 
     private var apiKey = apiKeys[0]
 
+    // ПРОФАЙЛЕР
+//    val builder = OkHttpClient.Builder()
+//        .addInterceptor(OkHttpProfilerInterceptor())
+//    val client: OkHttpClient = builder.build()
+
     private val api = Retrofit.Builder()
-        .baseUrl("https://api.openweathermap.org/data/2.5/")
+        .baseUrl("https://api.weatherapi.com/v1/")
         .addConverterFactory(GsonConverterFactory.create())
+        //.client(client) // for OkHttp Profiler
         .build()
         .create(WeatherApi::class.java)
+
 
     suspend fun currentWeather(
         cityName: String
     ): CurrentDataWeather {
         return try {
-            api.currentWeatherCall(cityName, "metric", "ru", apiKey)
+            api.currentWeatherCall(apiKey, cityName)
         } catch (e: HttpException) {
             changeApiKey(e.code())
             currentWeather(cityName)
@@ -39,7 +46,7 @@ class WeatherApiClient {
         cityName: String
     ): ForecastDataWeather {
         return try {
-            api.forecastWeatherCall(cityName, "metric", "ru", apiKey)
+            api.forecastWeatherCall(apiKey, cityName)
         } catch (e: HttpException) {
             changeApiKey(e.code())
             weatherForecast(cityName)
@@ -50,7 +57,7 @@ class WeatherApiClient {
     private fun changeApiKey(code: Int) {
         val sizeApiKeys = apiKeys.size
         var index = apiKeys.indexOf(apiKey)
-        if (index + 1 <= sizeApiKeys && code == 429) {
+        if (index + 1 <= sizeApiKeys && code == 403) {
             index++
             apiKey = apiKeys[index]
         } else {

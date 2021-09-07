@@ -4,7 +4,7 @@
     <string name="hint_city_name">Место</string>
     <string name="hint_description">погодные условия</string>
     <string name="hint_editCityName">Введите город</string>
-    <string name="InfoText_5day">Прогноз погоды на 5 дней:</string>
+    <string name="InfoText_5day">Подробный прогноз на 3 дня:</string>
     <string name="hint_today">Сегодня</string>
     <string name="infoTempLike">Ощущается:</string>
     <string name="infoTemp_t_c">t °C :</string>

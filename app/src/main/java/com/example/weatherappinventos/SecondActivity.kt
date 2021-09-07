@@ -1,8 +1,6 @@
 package com.example.weatherappinventos
 
-import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
@@ -11,11 +9,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.whenCreated
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherappinventos.apiprocessing.WeatherApiClient
 import com.example.weatherappinventos.database.WeatherDatabase
-import com.example.weatherappinventos.dataclass.CurrentDataWeather
 import com.example.weatherappinventos.dataclass.ForecastDataWeather
+import com.example.weatherappinventos.dataclass.ForecastHourItems
+import com.example.weatherappinventos.recyclerview.SecondAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_second.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +33,8 @@ class SecondActivity : AppCompatActivity() {
     private val db = WeatherDatabase
     private val cityName = db.getAll(this).name
 
+    private var hourItems: MutableList<ForecastHourItems> = ArrayList()
+
     private val coroutineJob = Job()
     private val mainCoroutine = CoroutineScope(Main + coroutineJob)
 
@@ -42,6 +43,9 @@ class SecondActivity : AppCompatActivity() {
             whenCreated {
                 processCurrentApi()
                 processForecastApi()
+                rv_second.layoutManager =
+                    LinearLayoutManager(this@SecondActivity, LinearLayoutManager.HORIZONTAL, false)
+                rv_second.adapter = SecondAdapter(hourItems)
             }
         }
     }
@@ -51,8 +55,6 @@ class SecondActivity : AppCompatActivity() {
         setContentView(R.layout.activity_second)
 
         apiClient = WeatherApiClient()
-
-        swipeRefreshSecond()
     }
 
     override fun onBackPressed() {
@@ -115,31 +117,10 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
-    private fun swipeRefreshSecond() {
-        val swipeRefresh: SwipeRefreshLayout = findViewById(R.id.go_refresh)
-        val runnable = Runnable {
-            counter = true
-            mainCoroutine.launch {
-                whenCreated {
-                    processCurrentApi()
-                    processForecastApi()
-                }
-            }
-            swipeRefresh.isRefreshing = false
-        }
-
-        swipeRefresh.setOnRefreshListener { swipeRefresh.postDelayed(runnable, 800L) }
-
-        go_refresh.setColorSchemeResources(
-            android.R.color.holo_orange_light,
-            android.R.color.holo_red_light
-        )
-    }
-
     private suspend fun processCurrentApi() {
         try {
-            val response = apiClient.currentWeather(cityName)
-            val weather: CurrentDataWeather = response
+            val response = apiClient.weatherForecast(cityName)
+            val weather: ForecastDataWeather = response
             presentData(weather)
         } catch (e: HttpException) {
             toHandleHttpErrors(e.code())
@@ -154,6 +135,7 @@ class SecondActivity : AppCompatActivity() {
             val weatherSec: ForecastDataWeather = response
             weatherSec.let {
                 showWeekDays(it)
+                addHourItems(it)
                 setIcons(it)
                 showForecastData(it)
                 progressBarSecond.visibility = View.INVISIBLE
@@ -163,6 +145,94 @@ class SecondActivity : AppCompatActivity() {
         } catch (e: Exception) {
             checkTransmissionErrors()
         }
+    }
+
+    private fun addHourItems(data: ForecastDataWeather) {
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[0].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[0].condition.code),
+                data.forecast.forecastday[0].hour[0].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[2].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[2].condition.code),
+                data.forecast.forecastday[0].hour[2].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[4].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[4].condition.code),
+                data.forecast.forecastday[0].hour[4].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[6].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[6].condition.code),
+                data.forecast.forecastday[0].hour[6].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[8].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[8].condition.code),
+                data.forecast.forecastday[0].hour[8].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[10].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[10].condition.code),
+                data.forecast.forecastday[0].hour[10].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[12].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[12].condition.code),
+                data.forecast.forecastday[0].hour[12].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[14].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[14].condition.code),
+                data.forecast.forecastday[0].hour[14].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[16].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[16].condition.code),
+                data.forecast.forecastday[0].hour[16].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[18].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[18].condition.code),
+                data.forecast.forecastday[0].hour[18].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[20].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[20].condition.code),
+                data.forecast.forecastday[0].hour[20].temp_c.toString() + " °C"
+            )
+        )
+        hourItems.add(
+            ForecastHourItems(
+                data.forecast.forecastday[0].hour[22].time.substringAfter(" "),
+                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[22].condition.code),
+                data.forecast.forecastday[0].hour[22].temp_c.toString() + " °C"
+            )
+        )
+        SecondAdapter(hourItems)
     }
 
     private fun toHandleHttpErrors(code: Int) {
@@ -180,53 +250,81 @@ class SecondActivity : AppCompatActivity() {
         if (code == 404) city_name.text = ""
     }
 
-    private fun reduceIcons(viewIcon: ImageView, nameIcon: String) {
+    private fun reduceIcons(viewIcon: ImageView, nameIcon: Int) {
         viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
     }
 
     private fun setIcons(main: ForecastDataWeather) {
-        reduceIcons(mainDescrImage, main.list[0].weather[0].icon)
-        reduceIcons(firstDescrImage, main.list[7].weather[0].icon)
-        reduceIcons(secondDescrImage, main.list[15].weather[0].icon)
-        reduceIcons(thirdDescrImage, main.list[23].weather[0].icon)
-        reduceIcons(fourthDescrImage, main.list[31].weather[0].icon)
-        reduceIcons(fifthDescrImage, main.list[39].weather[0].icon)
+        reduceIcons(mainDescrImage, main.forecast.forecastday[0].day.condition.code)
+        reduceIcons(firstDescrImage, main.forecast.forecastday[0].day.condition.code)
+        reduceIcons(secondDescrImage, main.forecast.forecastday[1].day.condition.code)
+        reduceIcons(thirdDescrImage, main.forecast.forecastday[2].day.condition.code)
     }
 
     // возвращает значение аргумента в зависимости от имени иконки
-    private fun analyzeWeatherConditionIcon(iconName: String): Int {
-        return when (iconName) {
-            "01d" -> R.drawable.r01d
-            "01n" -> R.drawable.r01n
-            "02d" -> R.drawable.r02d
-            "02n" -> R.drawable.r02n
-            "03d" -> R.drawable.r03d
-            "03n" -> R.drawable.r03n
-            "04d" -> R.drawable.r04d
-            "04n" -> R.drawable.r04n
-            "09d" -> R.drawable.r09d
-            "09n" -> R.drawable.r09n
-            "10d" -> R.drawable.r10d
-            "10n" -> R.drawable.r10n
-            "11d" -> R.drawable.r11d
-            "11n" -> R.drawable.r11n
-            "13d" -> R.drawable.r13d
-            "13n" -> R.drawable.r13n
-            "50d" -> R.drawable.r50d
-            "50n" -> R.drawable.r50n
-            else -> R.drawable.r02d
+    private fun analyzeWeatherConditionIcon(iconCode: Int): Int {
+        return when (iconCode) {
+            1000 -> R.drawable.sunny
+            1003 -> R.drawable.sunny_intervals
+            1006 -> R.drawable.white_cloud
+            1009 -> R.drawable.white_cloud
+            1030 -> R.drawable.black_low_cloud
+            1063 -> R.drawable.heavy_rain_showers
+            1066 -> R.drawable.light_snow_showers
+            1069 -> R.drawable.sleet_showers
+            1072 -> R.drawable.fog
+            1087 -> R.drawable.thundery_showers
+            1114 -> R.drawable.cloudy_with_heavy_snow
+            1117 -> R.drawable.cloudy_with_heavy_snow
+            1135 -> R.drawable.fog
+            1147 -> R.drawable.fog
+            1150 -> R.drawable.cloudy_with_heavy_rain
+            1153 -> R.drawable.cloudy_with_heavy_rain
+            1168 -> R.drawable.fog
+            1171 -> R.drawable.cloudy_with_heavy_rain
+            1180 -> R.drawable.heavy_rain_showers
+            1183 -> R.drawable.cloudy_with_light_rain
+            1186 -> R.drawable.light_rain_showers
+            1189 -> R.drawable.cloudy_with_light_rain
+            1192 -> R.drawable.heavy_rain_showers
+            1195 -> R.drawable.cloudy_with_heavy_rain
+            1198 -> R.drawable.cloudy_with_heavy_rain
+            1201 -> R.drawable.cloudy_with_heavy_rain
+            1204 -> R.drawable.cloudy_with_sleet
+            1207 -> R.drawable.cloudy_with_sleet
+            1210 -> R.drawable.light_snow_showers
+            1213 -> R.drawable.cloudy_with_light_snow
+            1216 -> R.drawable.light_snow_showers
+            1219 -> R.drawable.cloudy_with_light_snow
+            1222 -> R.drawable.heavy_snow_showers
+            1225 -> R.drawable.cloudy_with_heavy_snow
+            1237 -> R.drawable.cloudy_with_light_snow
+            1240 -> R.drawable.light_rain_showers
+            1243 -> R.drawable.heavy_rain_showers
+            1246 -> R.drawable.heavy_rain_showers
+            1249 -> R.drawable.sleet_showers
+            1252 -> R.drawable.sleet_showers
+            1255 -> R.drawable.light_snow_showers
+            1258 -> R.drawable.heavy_snow_showers
+            1261 -> R.drawable.light_snow_showers
+            1264 -> R.drawable.heavy_snow_showers
+            1273 -> R.drawable.thundery_showers
+            1276 -> R.drawable.thunderstorms
+            1279 -> R.drawable.thundery_showers
+            1282 -> R.drawable.thunderstorms
+            else -> R.drawable.sunny_intervals
         }
     }
 
     // перевод и установка представляемых данных текущей температуры
-    private fun presentData(main: CurrentDataWeather) {
+    private fun presentData(main: ForecastDataWeather) {
         min_maxTemp.text = "За сутки: min  ${
             String.format(
                 "%.1f",
-                main.main.temp_min
+                main.forecast.forecastday[0].day.mintemp_c
             )
-        } °C    max  ${String.format("%.1f", main.main.temp_max)} °C"
-        val constPrDt = weekDayValue(main.dt)
+        } °C    max  ${String.format("%.1f", main.forecast.forecastday[0].day.maxtemp_c)} °C"
+        val constPrDt = weekDayValue(main.current.last_updated_epoch.toLong())
         var st = constPrDt[0]
         var mounthName = constPrDt[1]
         val numberDay = constPrDt[2]
@@ -257,13 +355,10 @@ class SecondActivity : AppCompatActivity() {
             "Sun" -> "Воскресенье"
             else -> ""
         }
-        with(main) {
-
-            cityNameSecond.text = main.name
-            cityTempSecond.text = "${String.format("%.1f", main.main.temp)} °C"
-            cityDescrSecond.text = main.weather[0].description
-            weekDate.text = "${st},                  ${numberDay} ${mounthName}"
-        }
+        cityNameSecond.text = main.location.name
+        cityTempSecond.text = "${String.format("%.1f", main.current.temp_c)} °C"
+        cityDescrSecond.text = main.current.condition.text
+        weekDate.text = "${st},                  ${numberDay} ${mounthName}"
     }
 
     // извлекатель дня недели из UNIX даты
@@ -291,35 +386,63 @@ class SecondActivity : AppCompatActivity() {
     }
 
     // извлечение и перевод дней недели из приходящей в UNIX формате даты
-    fun showWeekDays(main: ForecastDataWeather) {
-        nameDay1.text = "${translateWeekDays(main.list[7].dt)}:"
-        nameDay2.text = "${translateWeekDays(main.list[15].dt)}:"
-        nameDay3.text = "${translateWeekDays(main.list[23].dt)}:"
-        nameDay4.text = "${translateWeekDays(main.list[31].dt)}:"
-        nameDay5.text = "${translateWeekDays(main.list[39].dt)}:"
+    private fun showWeekDays(main: ForecastDataWeather) {
+        date_day_one.text =
+            "${translateWeekDays(main.forecast.forecastday[0].date_epoch.toLong())}:"
+        date_day_two.text =
+            "${translateWeekDays(main.forecast.forecastday[1].date_epoch.toLong())}:"
+        date_day_three.text =
+            "${translateWeekDays(main.forecast.forecastday[2].date_epoch.toLong())}:"
     }
 
     // представление данных, прогнозируеммой погоды
-    fun showForecastData(main: ForecastDataWeather) {
-        // прогноз температуры на 5 дней (1 колонка)
-        dayOneTemp.text = "${String.format("%.1f", main.list[7].main.temp)} °C"
-        dayTwoTemp.text = "${String.format("%.1f", main.list[15].main.temp)} °C"
-        dayThreeTemp.text = "${String.format("%.1f", main.list[23].main.temp)} °C"
-        dayFourTemp.text = "${String.format("%.1f", main.list[31].main.temp)} °C"
-        dayFiveTemp.text = "${String.format("%.1f", main.list[39].main.temp)} °C"
+    private fun showForecastData(main: ForecastDataWeather) {
 
-        // прогноз ощущаемой температуры на 5 дней (2 колонка)
-        dayOneLikeTemp.text = "${String.format("%.1f", main.list[7].main.feels_like)} °C"
-        dayTwoLikeTemp.text = "${String.format("%.1f", main.list[15].main.feels_like)} °C"
-        dayThreeLikeTemp.text = "${String.format("%.1f", main.list[23].main.feels_like)} °C"
-        dayFourLikeTemp.text = "${String.format("%.1f", main.list[31].main.feels_like)} °C"
-        dayFiveLikeTemp.text = "${String.format("%.1f", main.list[39].main.feels_like)} °C"
+        // Макс темп за день
+        temp_max_one.text =
+            "Max t:\n${String.format("%.1f", main.forecast.forecastday[0].day.maxtemp_c)} °C"
+        temp_max_two.text =
+            "Max t:\n${String.format("%.1f", main.forecast.forecastday[1].day.maxtemp_c)} °C"
+        temp_max_three.text =
+            "Max t:\n${String.format("%.1f", main.forecast.forecastday[2].day.maxtemp_c)} °C"
+
+        // Мин темп за день
+        temp_min_one.text =
+            "Min t:\n${String.format("%.1f", main.forecast.forecastday[0].day.mintemp_c)} °C"
+        temp_min_two.text =
+            "Min t:\n${String.format("%.1f", main.forecast.forecastday[1].day.mintemp_c)} °C"
+        temp_min_three.text =
+            "Min t:\n${String.format("%.1f", main.forecast.forecastday[2].day.mintemp_c)} °C"
+
+        // Средняя влажность за день
+        hum_day_one.text = "Влажность:\n${main.forecast.forecastday[0].day.avghumidity} %"
+        hum_day_two.text = "Влажность:\n${main.forecast.forecastday[1].day.avghumidity} %"
+        hum_day_three.text = "Влажность:\n${main.forecast.forecastday[2].day.avghumidity} %"
+
+        // Макс скор ветра км ч
+        wind_speed_one.text = "Ветер, Vmax:\n${main.forecast.forecastday[0].day.maxwind_kph} км/ч"
+        wind_speed_two.text = "Ветер, Vmax:\n${main.forecast.forecastday[1].day.maxwind_kph} км/ч"
+        wind_speed_three.text = "Ветер, Vmax:\n${main.forecast.forecastday[2].day.maxwind_kph} км/ч"
+
+        // Время восхода солнца
+        sunrise_time_one.text =
+            "Восход:\n${main.forecast.forecastday[0].astro.sunrise.substringBefore(' ')}"
+        sunrise_time_two.text =
+            "Восход:\n${main.forecast.forecastday[1].astro.sunrise.substringBefore(' ')}"
+        sunrise_time_three.text =
+            "Восход:\n${main.forecast.forecastday[2].astro.sunrise.substringBefore(' ')}"
+
+        // Время заката
+        sunset_time_one.text =
+            "Закат:\n${main.forecast.forecastday[0].astro.sunset.substringBefore(' ')}"
+        sunset_time_two.text =
+            "Закат:\n${main.forecast.forecastday[1].astro.sunset.substringBefore(' ')}"
+        sunset_time_three.text =
+            "Закат:\n${main.forecast.forecastday[2].astro.sunset.substringBefore(' ')}"
 
         // погодные условния (прогноз)
-        descrText1.text = main.list[7].weather[0].description
-        descrText2.text = main.list[15].weather[0].description
-        descrText3.text = main.list[23].weather[0].description
-        descrText4.text = main.list[31].weather[0].description
-        descrText5.text = main.list[39].weather[0].description
+        descr_day_one.text = main.forecast.forecastday[0].day.condition.text
+        descr_day_two.text = main.forecast.forecastday[1].day.condition.text
+        descr_day_three.text = main.forecast.forecastday[2].day.condition.text
     }
 }

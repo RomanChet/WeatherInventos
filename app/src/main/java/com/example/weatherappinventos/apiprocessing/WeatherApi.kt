@@ -7,23 +7,22 @@ import retrofit2.http.Query
 
 // Интерфейс для выполнения GET запросов с параметрами
 interface WeatherApi {
-    // https://api.openweathermap.org/data/2.5/weather?q=moscow&units=metric&lang=ru&appid=cef1ebe434addacc0ea0911feea6b570
-    @GET("/data/2.5/weather")
+    // http://api.weatherapi.com/v1/current.json?key=b5f6f391da774ad7a4a195525212406&q=ивня&lang=ru
+    @GET("/v1/current.json")
     suspend fun currentWeatherCall(
-        @Query("q") city: String, // параметр города
-        @Query("units") units: String, // единицы измерения
-        @Query("lang") lang: String, // язык вывода результатов
-        @Query("APPID") apiKey: String
+        @Query("key") key: String, // апи ключ
+        @Query("q") city: String, // место
+        @Query("lang") lang: String = "ru" // язык вывода результатов, по умолчанию ру
     )
             : CurrentDataWeather
 
-    // https://api.openweathermap.org/data/2.5/forecast?q=%D0%BC%D0%BE%D1%81&units=metric&lang=ru&cnt=5&appid=cef1ebe434addacc0ea0911feea6b570
-    @GET("/data/2.5/forecast")
+    //https://api.weatherapi.com/v1/forecast.json?key=b5f6f391da774ad7a4a195525212406&q=ивня&days=5
+    @GET("/v1/forecast.json")
     suspend fun forecastWeatherCall(
-        @Query("q") city: String, // параметр города
-        @Query("units") units: String, // единицы измерения
-        @Query("lang") lang: String, // язык вывода результатов
-        @Query("APPID") apiKey: String
+        @Query("key") key: String, // апи ключ
+        @Query("q") city: String, // место
+        @Query("lang") lang: String = "ru", // язык вывода результатов, по умолчанию ру
+        @Query("days") days: Int = 5 // кол-во дней для прогноза , по умолчанию 5
     )
             : ForecastDataWeather
 }

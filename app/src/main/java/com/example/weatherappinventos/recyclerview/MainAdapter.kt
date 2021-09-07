@@ -23,7 +23,7 @@ class MainAdapter(var items: MutableList<MainItem>, val callback: Callback) :
     inner class MainHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val cityName = itemView.findViewById<TextView>(R.id.cityName)
-        private val cityTemp = itemView.findViewById<TextView>(R.id.currentCityTemp)
+        private val cityTemp = itemView.findViewById<TextView>(R.id.hourTemp)
 
 
         fun bind(item: MainItem) {

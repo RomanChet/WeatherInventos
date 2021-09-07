@@ -6,10 +6,12 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/descrText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:nestedScrollingEnabled="true"
         android:background="#D7E4D9"
         tools:context="com.example.weatherappinventos.MainActivity">
 
@@ -139,5 +141,6 @@
             app:layout_constraintTop_toTopOf="@+id/backgroundDown" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

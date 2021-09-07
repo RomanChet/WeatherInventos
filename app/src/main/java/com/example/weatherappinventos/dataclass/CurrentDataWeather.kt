@@ -1,61 +1,53 @@
 package com.example.weatherappinventos.dataclass
 
 data class CurrentDataWeather(
-    val coord: Coord,
-    val weather: List<Weather>,
-    val base: String,
-    val main: Main,
-    val visibility: Int,
-    val wind: Wind,
-    val clouds: Clouds,
-    val dt: Long,
-    val sys: CurrentSys,
-    val timezone: Int,
-    val id: Int,
+    val location: Location,
+    val current: Current
+)
+
+data class Location(
     val name: String,
-    val cod: Int
-)
-
-data class Main(
-    val temp: Double,
-    val feels_like: Double,
-    val temp_min: Double,
-    val temp_max: Double,
-    val pressure: Int,
-    val sea_level: Int,
-    val grnd_level: Int,
-    val humidity: Int,
-    val temp_kf: Double
-)
-
-data class Weather(
-    val id: Int,
-    val main: String,
-    val description: String,
-    val icon: String
-)
-
-data class Clouds(
-    val all: Int
-)
-
-data class Coord(
-    val lon: Double,
-    val lat: Double
-)
-
-data class CurrentSys(
-    val type: Int,
-    val id: Int,
+    val region: String,
     val country: String,
-    val sunrise: Int,
-    val sunset: Int,
-    val pod: String
+    val lat: Double,
+    val lon: Double,
+    val tz_id: String,
+    val localtime_epoch: Int,
+    val localtime: String
 )
 
-data class Wind(
-    val speed: Double,
-    val deg: Int
+data class Current(
+
+    val last_updated_epoch: Int,
+    val last_updated: String,
+    val temp_c: Double,
+    val temp_f: Double,
+    val is_day: Int,
+    val condition: Condition,
+    val wind_mph: Double,
+    val wind_kph: Double,
+    val wind_degree: Int,
+    val wind_dir: String,
+    val pressure_mb: Double,
+    val pressure_in: Double,
+    val precip_mm: Double,
+    val precip_in: Double,
+    val humidity: Int,
+    val cloud: Int,
+    val feelslike_c: Double,
+    val feelslike_f: Double,
+    val vis_km: Double,
+    val vis_miles: Double,
+    val uv: Double,
+    val gust_mph: Double,
+    val gust_kph: Double
+)
+
+data class Condition(
+
+    val text: String,
+    val icon: String,
+    val code: Int
 )
 
 data class MainItem(
