@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private var items: MutableList<MainItem> = ArrayList()
+    var items: MutableList<MainItem> = ArrayList()
 
     private lateinit var apiClient: WeatherApiClient
     private var counter = true
