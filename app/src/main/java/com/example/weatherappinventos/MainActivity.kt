@@ -33,6 +33,8 @@ import java.lang.Runnable
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
+
+
     private var items: MutableList<MainItem> = ArrayList()
 
     private lateinit var apiClient: WeatherApiClient
