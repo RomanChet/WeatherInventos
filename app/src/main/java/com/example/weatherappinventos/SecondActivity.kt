@@ -24,6 +24,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class SecondActivity : AppCompatActivity() {
@@ -53,14 +54,13 @@ class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
-
+        initListeners()
         apiClient = WeatherApiClient()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-
-        db.insertFun(this, cityNameSecond.text.toString(), cityTempSecond.text.toString())
+        //db.insertFun(this, cityNameSecond.text.toString(), cityTempSecond.text.toString())
     }
 
     override fun onStart() {
@@ -76,6 +76,19 @@ class SecondActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mainCoroutine.cancel()
+    }
+
+
+    private fun initListeners() {
+        firstDescrImage.setOnClickListener {
+            onClickDay(DAY_ONE)
+        }
+        secondDescrImage.setOnClickListener {
+            onClickDay(DAY_TWO)
+        }
+        thirdDescrImage.setOnClickListener {
+            onClickDay(DAY_THREE)
+        }
     }
 
     private fun noDataInfo(value: Boolean) {
@@ -148,91 +161,24 @@ class SecondActivity : AppCompatActivity() {
     }
 
     private fun addHourItems(data: ForecastDataWeather) {
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[0].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[0].condition.code),
-                data.forecast.forecastday[0].hour[0].temp_c.toString() + " °C"
+        hourItems.clear()
+        val hours = listOf(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22)
+        val currentDay = when (DAY_SELECTED) {
+            DAY_ONE -> 0
+            DAY_TWO -> 1
+            DAY_THREE -> 2
+            else -> 0
+        }
+
+        hours.forEach { hour ->
+            hourItems.add(
+                ForecastHourItems(
+                    data.forecast.forecastday[currentDay].hour[hour].time.substringAfter(" "),
+                    analyzeWeatherConditionIcon(data.forecast.forecastday[currentDay].hour[hour].condition.code),
+                    data.forecast.forecastday[currentDay].hour[hour].temp_c.toString() + " °C"
+                )
             )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[2].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[2].condition.code),
-                data.forecast.forecastday[0].hour[2].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[4].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[4].condition.code),
-                data.forecast.forecastday[0].hour[4].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[6].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[6].condition.code),
-                data.forecast.forecastday[0].hour[6].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[8].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[8].condition.code),
-                data.forecast.forecastday[0].hour[8].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[10].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[10].condition.code),
-                data.forecast.forecastday[0].hour[10].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[12].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[12].condition.code),
-                data.forecast.forecastday[0].hour[12].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[14].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[14].condition.code),
-                data.forecast.forecastday[0].hour[14].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[16].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[16].condition.code),
-                data.forecast.forecastday[0].hour[16].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[18].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[18].condition.code),
-                data.forecast.forecastday[0].hour[18].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[20].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[20].condition.code),
-                data.forecast.forecastday[0].hour[20].temp_c.toString() + " °C"
-            )
-        )
-        hourItems.add(
-            ForecastHourItems(
-                data.forecast.forecastday[0].hour[22].time.substringAfter(" "),
-                analyzeWeatherConditionIcon(data.forecast.forecastday[0].hour[22].condition.code),
-                data.forecast.forecastday[0].hour[22].temp_c.toString() + " °C"
-            )
-        )
-        SecondAdapter(hourItems)
+        }
     }
 
     private fun toHandleHttpErrors(code: Int) {
@@ -254,8 +200,26 @@ class SecondActivity : AppCompatActivity() {
         viewIcon.setImageResource(analyzeWeatherConditionIcon(nameIcon))
     }
 
+    private fun onClickDay(selectedDay: String) {
+        when (selectedDay) {
+            DAY_ONE -> {
+                DAY_SELECTED = DAY_ONE
+            }
+            DAY_TWO -> {
+                DAY_SELECTED = DAY_TWO
+            }
+            DAY_THREE -> {
+                DAY_SELECTED = DAY_THREE
+            }
+        }
+        mainCoroutine.launch {
+            processCurrentApi()
+            processForecastApi()
+            rv_second.adapter = SecondAdapter(hourItems)
+        }
+    }
+
     private fun setIcons(main: ForecastDataWeather) {
-        reduceIcons(mainDescrImage, main.forecast.forecastday[0].day.condition.code)
         reduceIcons(firstDescrImage, main.forecast.forecastday[0].day.condition.code)
         reduceIcons(secondDescrImage, main.forecast.forecastday[1].day.condition.code)
         reduceIcons(thirdDescrImage, main.forecast.forecastday[2].day.condition.code)
@@ -317,48 +281,67 @@ class SecondActivity : AppCompatActivity() {
     }
 
     // перевод и установка представляемых данных текущей температуры
-    private fun presentData(main: ForecastDataWeather) {
-        min_maxTemp.text = "За сутки: min  ${
-            String.format(
-                "%.1f",
-                main.forecast.forecastday[0].day.mintemp_c
-            )
-        } °C    max  ${String.format("%.1f", main.forecast.forecastday[0].day.maxtemp_c)} °C"
-        val constPrDt = weekDayValue(main.current.last_updated_epoch.toLong())
-        var st = constPrDt[0]
-        var mounthName = constPrDt[1]
-        val numberDay = constPrDt[2]
+    private fun presentData(data: ForecastDataWeather) {
+        cityNameSecond.text = data.location.name
+        when (DAY_SELECTED) {
+            DAY_ONE -> {
+                reduceIcons(mainDescrImage, data.forecast.forecastday[0].day.condition.code)
+                min_maxTemp.text = "За сутки: min  ${
+                    String.format(
+                        "%.1f",
+                        data.forecast.forecastday[0].day.mintemp_c
+                    )
+                } °C    max  ${
+                    String.format(
+                        "%.1f",
+                        data.forecast.forecastday[0].day.maxtemp_c
+                    )
+                } °C"
 
-        mounthName = when (mounthName) {
-            "Jan" -> "Января"
-            "Feb" -> "Февраля"
-            "Mar" -> "Марта"
-            "Apr" -> "Апреля"
-            "May" -> "Мая"
-            "Jun" -> "Июня"
-            "Jul" -> "Июля"
-            "Aug" -> "Августа"
-            "Sep" -> "Сентября"
-            "Oct" -> "Октября"
-            "Nov" -> "Ноября"
-            "Dec" -> "Декабря"
-            else -> ""
+                cityTempSecond.text = "${String.format("%.1f", data.current.temp_c)} °C"
+                cityDescrSecond.text = data.current.condition.text
+                weekDate.text = getSelectedDayDate(data, DAY_ONE)
+            }
+            DAY_TWO -> {
+                reduceIcons(mainDescrImage, data.forecast.forecastday[1].day.condition.code)
+                min_maxTemp.text = "За сутки: min  ${
+                    String.format(
+                        "%.1f",
+                        data.forecast.forecastday[1].day.mintemp_c
+                    )
+                } °C    max  ${
+                    String.format(
+                        "%.1f",
+                        data.forecast.forecastday[1].day.maxtemp_c
+                    )
+                } °C"
+
+                cityTempSecond.text =
+                    "${String.format("%.1f", data.forecast.forecastday[1].day.avgtemp_c)} °C"
+                cityDescrSecond.text = data.forecast.forecastday[1].day.condition.text
+                weekDate.text = getSelectedDayDate(data, DAY_TWO)
+            }
+            DAY_THREE -> {
+                reduceIcons(mainDescrImage, data.forecast.forecastday[2].day.condition.code)
+                min_maxTemp.text = "За сутки: min  ${
+                    String.format(
+                        "%.1f",
+                        data.forecast.forecastday[2].day.mintemp_c
+                    )
+                } °C    max  ${
+                    String.format(
+                        "%.1f",
+                        data.forecast.forecastday[2].day.maxtemp_c
+                    )
+                } °C"
+
+                cityTempSecond.text =
+                    "${String.format("%.1f", data.forecast.forecastday[2].day.avgtemp_c)} °C"
+                cityDescrSecond.text = data.forecast.forecastday[2].day.condition.text
+                weekDate.text = getSelectedDayDate(data, DAY_THREE)
+            }
         }
 
-        st = when (st) {
-            "Mon" -> "Понедельник"
-            "Tue" -> "Вторник"
-            "Wed" -> "Среда"
-            "Thu" -> "Четверг"
-            "Fri" -> "Пятница"
-            "Sat" -> "Суббота"
-            "Sun" -> "Воскресенье"
-            else -> ""
-        }
-        cityNameSecond.text = main.location.name
-        cityTempSecond.text = "${String.format("%.1f", main.current.temp_c)} °C"
-        cityDescrSecond.text = main.current.condition.text
-        weekDate.text = "${st},                  ${numberDay} ${mounthName}"
     }
 
     // извлекатель дня недели из UNIX даты
@@ -385,6 +368,46 @@ class SecondActivity : AppCompatActivity() {
         return translateWeekDays(weekDayValue(dt)[0])
     }
 
+    private fun getSelectedDayDate(data: ForecastDataWeather, selectedDay: String): String {
+        val constPrDt = when (selectedDay) {
+            DAY_ONE -> weekDayValue(data.forecast.forecastday[0].date_epoch.toLong())
+            DAY_TWO -> weekDayValue(data.forecast.forecastday[1].date_epoch.toLong())
+            DAY_THREE -> weekDayValue(data.forecast.forecastday[2].date_epoch.toLong())
+            else -> weekDayValue(data.forecast.forecastday[0].date_epoch.toLong())
+        }
+        var st = constPrDt[0]
+        var monthName = constPrDt[1]
+        val numberDay = constPrDt[2]
+
+        monthName = when (monthName) {
+            "Jan" -> "Января"
+            "Feb" -> "Февраля"
+            "Mar" -> "Марта"
+            "Apr" -> "Апреля"
+            "May" -> "Мая"
+            "Jun" -> "Июня"
+            "Jul" -> "Июля"
+            "Aug" -> "Августа"
+            "Sep" -> "Сентября"
+            "Oct" -> "Октября"
+            "Nov" -> "Ноября"
+            "Dec" -> "Декабря"
+            else -> ""
+        }
+
+        st = when (st) {
+            "Mon" -> "Понедельник"
+            "Tue" -> "Вторник"
+            "Wed" -> "Среда"
+            "Thu" -> "Четверг"
+            "Fri" -> "Пятница"
+            "Sat" -> "Суббота"
+            "Sun" -> "Воскресенье"
+            else -> ""
+        }
+        return "${st},                  $numberDay $monthName"
+    }
+
     // извлечение и перевод дней недели из приходящей в UNIX формате даты
     private fun showWeekDays(main: ForecastDataWeather) {
         date_day_one.text =
@@ -397,7 +420,6 @@ class SecondActivity : AppCompatActivity() {
 
     // представление данных, прогнозируеммой погоды
     private fun showForecastData(main: ForecastDataWeather) {
-
         // Макс темп за день
         temp_max_one.text =
             "Max t:\n${String.format("%.1f", main.forecast.forecastday[0].day.maxtemp_c)} °C"
@@ -444,5 +466,12 @@ class SecondActivity : AppCompatActivity() {
         descr_day_one.text = main.forecast.forecastday[0].day.condition.text
         descr_day_two.text = main.forecast.forecastday[1].day.condition.text
         descr_day_three.text = main.forecast.forecastday[2].day.condition.text
+    }
+
+    companion object {
+        private var DAY_SELECTED = "First Day"
+        private const val DAY_ONE = "First Day"
+        private const val DAY_TWO = "Second Day"
+        private const val DAY_THREE = "Third Day"
     }
 }

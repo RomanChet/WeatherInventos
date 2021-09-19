@@ -21,6 +21,27 @@
             android:background="@color/colorBackgroundMain"
             tools:context="com.example.weatherappinventos.SecondActivity">
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/day_one_group_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:constraint_referenced_ids="firstDescrImage,date_day_one,temp_max_one,temp_min_one,descr_day_one,hum_day_one,wind_speed_one,sunrise_time_one,sunset_time_one,first_background_line" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/day_two_group_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:constraint_referenced_ids="secondDescrImage,date_day_two,temp_max_two,temp_min_two,descr_day_two,hum_day_two,wind_speed_two,sunrise_time_two,sunset_time_two,second_background_line" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/day_three_group_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:constraint_referenced_ids="thirdDescrImage,date_day_three,temp_max_three,temp_min_three,descr_day_three,hum_day_three,wind_speed_three,sunrise_time_three,sunset_time_three,third_background_line" />
+
             <View
                 android:id="@+id/bgUp"
                 android:layout_width="0dp"
@@ -65,6 +86,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/bgUp" />
 
+
             <View
                 android:id="@+id/first_background_line"
                 android:layout_width="match_parent"
@@ -74,7 +96,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/bgDown" />
-
 
             <View
                 android:id="@+id/second_background_line"
@@ -87,7 +108,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/first_background_line" />
 
             <View
-                android:id="@+id/thirth_background_line"
+                android:id="@+id/third_background_line"
                 android:layout_width="match_parent"
                 android:layout_height="110dp"
                 android:layout_marginTop="7dp"
@@ -134,9 +155,9 @@
                 android:background="@drawable/bg_white_rounded"
                 android:gravity="center"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/thirth_background_line"
+                app:layout_constraintEnd_toEndOf="@+id/third_background_line"
                 app:layout_constraintStart_toEndOf="@+id/hum_day_three"
-                app:layout_constraintTop_toTopOf="@+id/thirth_background_line" />
+                app:layout_constraintTop_toTopOf="@+id/third_background_line" />
 
             <TextView
                 android:id="@+id/sunset_time_two"
@@ -176,7 +197,7 @@
                 android:paddingEnd="3dp"
                 android:textColor="#424242"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/thirth_background_line"
+                app:layout_constraintBottom_toBottomOf="@+id/third_background_line"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/thirdDescrImage"
                 app:layout_constraintTop_toBottomOf="@+id/temp_min_three" />
@@ -203,7 +224,7 @@
                 android:gravity="center"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/temp_max_three"
-                app:layout_constraintTop_toTopOf="@+id/thirth_background_line" />
+                app:layout_constraintTop_toTopOf="@+id/third_background_line" />
 
             <TextView
                 android:id="@+id/wind_speed_three"
@@ -227,7 +248,7 @@
                 android:gravity="center"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/thirdDescrImage"
-                app:layout_constraintTop_toTopOf="@+id/thirth_background_line" />
+                app:layout_constraintTop_toTopOf="@+id/third_background_line" />
 
             <TextView
                 android:id="@+id/descr_day_two"
@@ -338,18 +359,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/firstDescrImage"
-                android:layout_width="100dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:background="@drawable/bg_white_rounded"
-                app:layout_constraintBottom_toBottomOf="@+id/first_background_line"
-                app:layout_constraintStart_toStartOf="@+id/first_background_line"
-                app:layout_constraintTop_toBottomOf="@+id/date_day_one" />
-
-            <ImageView
                 android:id="@+id/secondDescrImage"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
@@ -357,6 +366,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:background="@drawable/bg_white_rounded"
+                android:clickable="true"
                 app:layout_constraintBottom_toBottomOf="@+id/second_background_line"
                 app:layout_constraintStart_toStartOf="@+id/second_background_line"
                 app:layout_constraintTop_toBottomOf="@+id/date_day_two" />
@@ -369,7 +379,8 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:background="@drawable/bg_white_rounded"
-                app:layout_constraintBottom_toBottomOf="@+id/thirth_background_line"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="@+id/third_background_line"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/date_day_three" />
 
@@ -487,8 +498,8 @@
                 android:gravity="center"
                 android:textColor="#424242"
                 android:textStyle="bold|italic"
-                app:layout_constraintStart_toStartOf="@+id/thirth_background_line"
-                app:layout_constraintTop_toTopOf="@+id/thirth_background_line" />
+                app:layout_constraintStart_toStartOf="@+id/third_background_line"
+                app:layout_constraintTop_toTopOf="@+id/third_background_line" />
 
             <TextView
                 android:id="@+id/temp_max_one"
@@ -528,6 +539,19 @@
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/temp_max_one"
                 app:layout_constraintTop_toTopOf="@+id/first_background_line" />
+
+            <ImageView
+                android:id="@+id/firstDescrImage"
+                android:layout_width="100dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/bg_white_rounded"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="@+id/first_background_line"
+                app:layout_constraintStart_toStartOf="@+id/first_background_line"
+                app:layout_constraintTop_toBottomOf="@+id/date_day_one" />
 
             <TextView
                 android:id="@+id/wind_speed_one"
